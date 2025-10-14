@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\SkidayRacerRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation\Timestampable;
 
 #[ORM\Entity(repositoryClass: SkidayRacerRepository::class)]
 class SkidayRacer
@@ -32,6 +33,14 @@ class SkidayRacer
     #[ORM\ManyToOne(inversedBy: 'SkidayRacers')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Skiday $skiday = null;
+
+    #[ORM\Column]
+    #[Timestampable(on: 'create')]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column]
+    #[Timestampable(on: 'update')]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     public function getId(): ?int
     {
@@ -106,6 +115,30 @@ class SkidayRacer
     public function setSkiday(?Skiday $skiday): static
     {
         $this->skiday = $skiday;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

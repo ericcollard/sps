@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\EventRacerRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation\Timestampable;
 
 #[ORM\Entity(repositoryClass: EventRacerRepository::class)]
 class EventRacer
@@ -29,6 +30,14 @@ class EventRacer
     #[ORM\ManyToOne(inversedBy: 'EventRacers')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Racer $racer = null;
+
+    #[ORM\Column]
+    #[Timestampable(on: 'create')]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column]
+    #[Timestampable(on: 'update')]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     public function getId(): ?int
     {
@@ -91,6 +100,30 @@ class EventRacer
     public function setRacer(?Racer $racer): static
     {
         $this->racer = $racer;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

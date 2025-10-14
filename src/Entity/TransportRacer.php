@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\TransportRacerRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation\Timestampable;
 
 #[ORM\Entity(repositoryClass: TransportRacerRepository::class)]
 class TransportRacer
@@ -29,6 +30,14 @@ class TransportRacer
     #[ORM\ManyToOne(inversedBy: 'transportRacers')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Racer $racer = null;
+
+    #[ORM\Column]
+    #[Timestampable(on: 'create')]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column]
+    #[Timestampable(on: 'update')]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     public function getId(): ?int
     {
@@ -91,6 +100,30 @@ class TransportRacer
     public function setRacer(?Racer $racer): static
     {
         $this->racer = $racer;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
