@@ -1,0 +1,427 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Planning{% endblock %}
+
+{% block body %}
+<style>
+
+    .global-wrapper {
+        text-align: center;
+        margin: 0 auto; /* Centrer le conteneur dans la page */
+        overflow: hidden; /* sinon, on n'a pas les coins arrondis */
+        max-width: 1200px; /* Centrer le contenu interne des enfants */
+        border-radius: 5px;
+        -webkit-box-shadow: 0px 19px 27px -20px rgba(0, 0, 0, 0.16);
+        -moz-box-shadow: 0px 19px 27px -20px rgba(0, 0, 0, 0.16);
+        box-shadow: 0px 19px 27px -20px rgba(0, 0, 0, 0.16);
+    }
+
+    .header-wrapper {
+        position: relative; /* pour localiser le Today */
+        min-width: 200px;
+        min-height: 200px;
+        background-image: url({{ asset('images/bg.jpg') }});
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+    }
+    .calendar-wrapper {
+        background-color: white;
+    }
+
+    .header-contend {
+        width: 100%; /* Prend toute la place pour que le contenu interne soit centré */
+        color: white;
+    }
+
+    #reset {
+        display: block;
+        position: absolute;
+        right: 0.5em;
+        top: 0.5em;
+        z-index: 999;
+        color: rgba(255,255,255,.7);
+        cursor: pointer;
+        padding: 0 0.5em;
+        border: 1px solid rgba(255,255,255,.4);
+        border-radius: 4px;
+        -webkit-transition: all 0.3s ease;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        font-size: 11px;
+    }
+    #reset a {
+        text-decoration: none;
+        color: rgba(255,255,255,.7);
+    }
+
+    .month-wrapper {
+        position:relative;
+    }
+
+
+    .month-wrapper .pre-button, .month-wrapper .next-button {
+        cursor: pointer;
+        width: 1em;
+        height: 1em;
+        line-height: 1em;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 18px;
+    }
+    .pre-button {
+        left: 15px;
+    }
+
+    .next-button {
+        right: 15px;
+    }
+
+    .month-wrapper  i{
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .head-month {
+        line-height: 1;
+        font-size: 2em;
+        text-transform: uppercase;
+        font-weight: 500;
+    }
+
+    .year-wrapper {
+        line-height: 1;
+        font-size: 4em;
+        font-weight: 700;
+    }
+
+    /* Taille spécifique lorsque le panneau est sur la gauche */
+    @media (min-width: 992px) {
+        .head-month {
+            font-size: 1.5em;
+        }
+        .year-wrapper {
+            font-size: 3em;
+        }
+    }
+
+    .vacance {
+        background-color: rgba(163, 152, 123, 0.5);
+    }
+    .sortie {
+        background-color: rgba(179, 136, 162, 0.5);
+    }
+
+    .calendar-wrapper h5 {
+        font-size: 0.8em;
+    }
+
+    .day {
+        position: relative;
+        font-size: 0.8em;
+        min-height: 80Px;
+    }
+    .day-num {
+        font-size: 0.6rem;
+        display: block;
+        width: auto;
+        position: absolute;
+        right: 10px;
+        top: -2px;
+        padding: 0.2rem 0rem 0.5rem 0.1rem;
+        /* border: 5px solid; */
+        width: 1.25rem;
+        height: 1.25rem;
+        border-radius: 1.0rem;
+        background-color: slategrey;
+        color: white;
+    }
+    .day-num a {
+        color: white;
+        text-decoration: none ;
+    }
+
+    .day-name {
+        font-size: 1.2em;
+        color: lightslategrey;
+        font-weight: bold;
+        display: block;
+        position: absolute;
+        top: 0px;
+    }
+
+    .event-title  {
+        font-size: 1.2em;
+        color: rgba(255, 255, 255, 0.8);
+        width: auto;
+        font-weight: bold;
+        display: block;
+        position: absolute;
+        left: 0px;
+        top: -2px;
+        text-wrap: wrap;
+    }
+
+    .event-title a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+    }
+
+    .day-contend {
+        padding: 0;
+        margin: 0;
+    }
+
+    .day-transport-up, .day-transport-down {
+        color: dimgrey;
+        display: block;
+        position: absolute;
+        cursor: pointer;
+        z-index: 999;
+    }
+    .day-activity {
+        color: dimgrey;
+        display: block;
+        position: absolute;
+        /* cursor: pointer; */
+    }
+
+    .day-transport-up {
+        left: 10px;
+        bottom: 0px;
+    }
+
+    .day-transport-down {
+        right: 10px;
+        bottom: 0px;
+    }
+    .day-activity {
+        bottom: 0px;
+        width: 100%;
+        align-content: center;
+    }
+
+    .day-transport-up a, .day-transport-down a, .day-activity a {
+        text-decoration: none;
+        color: dimgrey;
+    }
+
+    .registred {
+        color: green;
+        display: inline;
+    }
+
+    .unregistred {
+        color: darkred;
+        display: inline;
+    }
+
+    /* Taille spécifique lorsque l'affichage est en mode liste */
+
+    @media (max-width: 992px) {
+        .day-transport-up, .day-transport-down, .day-activity {
+            font-size: 1.5em;
+        }
+        .day {
+            min-height: 100Px;
+        }
+    }
+
+</style>
+
+
+
+    <div class="mt-3" style="width: 60%; margin: auto; font-size: 0.8em; color: dimgrey ">Choix du coureur :</div>
+    <ul class="nav nav-pills  nav-fill " style="width: 60%; margin: auto">
+    {%  if family %}
+
+            {% for familyRacer in family.getRacers() %}
+                <li class="nav-item">
+                    <a class="nav-link {%  if racer and familyRacer.getId() == racer.id %}active{% endif %}" aria-current="page" href="{{ path('app_planning', {month: monthNum, year: year, racerId: familyRacer.id}) }}">
+                        {%  if familyRacer.getSex() == 'Fille' %}
+                            <i class="fa-solid fa-person-dress"></i>
+                        {% else %}
+                            <i class="fa-solid fa-person"></i>
+                        {% endif %}
+                        {{ familyRacer.getName() }}
+                    </a>
+                </li>
+            {% endfor %}
+
+    {% endif %}
+        <li class="nav-item">
+            <a class="nav-link {%  if racerId == 0 %}active{% endif %}" aria-current="page" href="{{ path('app_planning', {month: monthNum, year: year, racerId: 0}) }}">
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+                Coach
+            </a>
+        </li>
+    </ul>
+
+    <div class="global-wrapper d-lg-flex  mt-4">
+        <div class="header-wrapper d-flex align-items-center">
+            <p id="reset">
+                {% if racer %}
+                    <a href="{{ path('app_planning', {today: true, racerId: racer.id}) }}">Aujourd'hui</a>
+                {% else %}
+                    <a href="{{ path('app_planning', {today: true}) }}">Aujourd'hui</a>
+                {% endif %}
+
+            </p>
+            <div class="header-contend">
+                <div class="month-wrapper">
+                    <div class="pre-button d-flex align-items-center justify-content-center">
+                        {% if racer %}
+                            <a href="{{ path('app_planning', {month: previousMonth, year: previousYear, racerId: racer.id}) }}"><i class="fa fa-chevron-left"></i></a>
+                        {% else %}
+                            <a href="{{ path('app_planning', {month: previousMonth, year: previousYear}) }}"><i class="fa fa-chevron-left"></i></a>
+                        {% endif %}
+                    </div>
+                    <div class="head-month">{{ monthName }}</div>
+                    <div class="next-button d-flex align-items-center justify-content-center">
+                        {% if racer %}
+                            <a href="{{ path('app_planning', {month: nextMonth, year: nextYear, racerId: racer.id}) }}"><i class="fa fa-chevron-right"></i></a>
+                        {% else %}
+                            <a href="{{ path('app_planning', {month: nextMonth, year: nextYear}) }}"><i class="fa fa-chevron-right"></i></a>
+                        {% endif %}
+
+                    </div>
+                </div>
+                <div class="year-wrapper">
+                    {{ year }}
+                </div>
+                <div class="racer-wrapper">
+                    {% if racer %}
+                    {{ racer.name }}
+                    {{ racer.family.name }}
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="calendar-wrapper flex-fill">
+            <div class="container-fluid">
+                <header>
+                    <div class="row d-none d-lg-flex p-1 bg-dark-subtle text-black-50">
+                        {% for i in 0..6 %}
+                            <h5 class="col-lg p-1 text-center">{{ arrDayOfWeekName[i] }}</h5>
+                        {% endfor %}
+                    </div>
+                </header>
+                <div class="row border border-right-0 border-bottom-0">
+                    {% for row in daysFlags %}
+                    {% for i in 0..6 %}
+                        {% if i in row|keys %}
+                        <div class="{% if row[i]['sortie'] %}sortie{% endif %} {% if row[i]['vacance'] %}vacance{% endif %} col-lg p-2 border border-left-0 border-top-0 text-truncate">
+                        {% else %}
+                        <div class="col-lg p-2 border border-left-0 border-top-0 text-truncate d-none d-lg-inline-block bg-light text-muted">
+                        {% endif %}
+                            <div class="day row align-items-center">
+                                <div class="day-name d-lg-none text-center text-muted">{{ arrDayOfWeekName[i] }}</div>
+
+                                {% if i in row|keys %}
+                                <div class = "day-contend">
+                                    <div>{% if row[i]['location']!="" %}({{ row[i]['location'] }}){% endif %}</div>
+
+                                    {{ row[i]['skidayType'] }}
+
+                                    <div class = "day-transport-up">
+                                        {% if racer and row[i]['transportAller'] > -1 %}
+                                            <a href="{{ path('ToggleTransport', {transportRacerId: row[i]['transportRacerAllerId'], racerId: racer.getId(), transportId: row[i]['transportAllerId']}) }}">
+                                                <div class="{% if  row[i]['transportAller'] == 0 %}unregistred{% endif  %} {% if  row[i]['transportAller'] == 1 %}registred{% endif  %}">
+                                                    <i class="fa-solid fa-van-shuttle" title="Transport"></i>
+                                                </div>
+                                            </a>
+                                        {% elseif row[i]['transportAller'] > -1 %}
+                                            <i class="fa-solid fa-van-shuttle" title="Transport"></i>
+                                        {% endif  %}
+                                    </div>
+
+                                    <div class = "day-transport-down">
+                                        {% if racer and row[i]['transportRetour'] > -1 %}
+                                            <a href="{{ path('ToggleTransport', {transportRacerId: row[i]['transportRacerRetourId'], racerId: racer.getId(), transportId: row[i]['transportRetourId']}) }}">
+                                                <div class="{% if  row[i]['transportRetour'] == 0 %}unregistred{% endif  %} {% if  row[i]['transportRetour'] == 1 %}registred{% endif  %}">
+                                                    <i class="fa-solid fa-van-shuttle" title="Transport"></i>
+                                                </div>
+                                            </a>
+                                        {% elseif row[i]['transportRetour'] > -1 %}
+                                            <i class="fa-solid fa-van-shuttle" title="Transport"></i>
+                                        {% endif  %}
+                                    </div>
+
+                                    <div class = "day-activity">
+
+                                        {% if racer and row[i]['ski'] > -1 %}
+                                            <a href="{{ path('ToggleTraining', {racerId: racer.getId(), skidayRacerId: row[i]['skidayRacerId'], skidayId: row[i]['skidayId']}) }}">
+                                                <div class="{% if  row[i]['ski'] == 0 %}unregistred{% endif  %} {% if  row[i]['ski'] == 1 %}registred{% endif  %}">
+                                                    <i class="fa-solid fa-person-skiing" title="Entrainement"></i>
+                                                </div>
+                                            </a>
+                                        {% elseif row[i]['ski'] > -1 %}
+                                            <i class="fa-solid fa-person-skiing" title="Entrainement"></i>
+                                        {% endif  %}
+
+                                        {% if racer and row[i]['dinner'] > -1 %}
+                                            <a href="{{ path('ToggleLunch', {racerId: racer.getId(), skidayRacerId: row[i]['skidayRacerId'], skidayId: row[i]['skidayId']}) }}">
+                                                <div class="{% if  row[i]['dinner'] == 0 %}unregistred{% endif  %} {% if  row[i]['dinner'] == 1 %}registred{% endif  %}">
+                                                    <i class="fa-solid fa-utensils" title="Repas midi"></i>
+                                                </div>
+                                            </a>
+                                        {% elseif row[i]['dinner'] > -1 %}
+                                            <i class="fa-solid fa-utensils" title="Repas midi"></i>
+                                        {% endif  %}
+
+                                        {% if racer and row[i]['skipass'] > -1 %}
+                                            <a href="{{ path('ToggleSkipass', {racerId: racer.getId(), skidayRacerId: row[i]['skidayRacerId'], skidayId: row[i]['skidayId']}) }}">
+                                                <div class="{% if  row[i]['skipass'] == 0 %}unregistred{% endif  %} {% if  row[i]['skipass'] == 1 %}registred{% endif  %}">
+                                                    <i class="fa-solid fa-address-card" title="Forfait"></i>
+                                                </div>
+                                            </a>
+                                        {% elseif row[i]['skipass'] > -1 %}
+                                            <i class="fa-solid fa-address-card" title="Forfait"></i>
+                                        {% endif  %}
+
+
+                                    </div>
+
+                                    <div class = "day-transport-down">
+                                        {% if racer and row[i]['night'] > -1 %}
+                                            <a href="{{ path('ToggleAccomodation', {accomodationRacerId: row[i]['accomodationRacerId'], racerId: racer.getId(), accomodationId: row[i]['accomodationId']}) }}">
+                                                <div class="{% if  row[i]['night'] == 0 %}unregistred{% endif  %} {% if  row[i]['night'] == 1 %}registred{% endif  %}">
+                                                    <i class="fa-solid fa-bed" title="Hébergement"></i>
+                                                </div>
+                                            </a>
+                                        {% elseif row[i]['night'] > -1 %}
+                                            <i class="fa-solid fa-bed" title="Hébergement"></i>
+                                        {% endif  %}
+                                    </div>
+                                </div>
+
+                                <div class="event-title">
+                                    {% if not racer %}
+                                        <a href="{{ path('day_summary', {eventId: row[i]['eventId']}) }}">{{ row[i]['eventTitle'] }}</a>
+                                    {% else %}
+                                        {{ row[i]['eventTitle'] }}
+                                    {% endif %}
+                                </div>
+
+                                <div class = "day-num">
+                                    {{ row[i]['dayNum'] }}
+                                </div>
+
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="w-100"></div>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+{% endblock %}

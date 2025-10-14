@@ -1,0 +1,114 @@
+{% extends routeName == 'day_summary'
+    ? 'base.html.twig'
+    : 'baseprint.html.twig' %}
+
+{% block title %}Summary{% endblock %}
+
+{% block body %}
+<style>
+
+    h3 {
+        background-color: #b86e64;
+        color: white;
+        padding: 0.5em;
+    }
+
+    h4 {
+        color: #b86e64;
+    }
+
+</style>
+
+<div class="container">
+    <div class="row mt-2">
+        {% if routeName == 'day_summary'  %}<div class="col-8">{% else %}<div class="col-8">{% endif %}
+            <h2>Fiche préparation {{ title }} : {{ event.getTitle() }}</h2>
+            <p>Du {{ event.getStartdate().format('d/m/Y') }} au {{ event.getEnddate().format('d/m/Y') }}</p>
+            {{ event.getMemo() }}
+        </div>
+        {% if routeName == 'day_summary'  %}
+        <div class="col-4 d-flex justify-content-end">
+                <a href="{{ path('day_summary_print', {eventId: event.getId()}) }}"><button type="button" class="btn btn-primary">Imprimer</button></a>
+        </div>
+        {% endif %}
+    </div>
+    <div class="row mt-2">
+        {% if routeName == 'day_summary'  %}<div class="col-md-6">{% else %}<div class="col-12">{% endif %}
+            <h3>Journées de ski</h3>
+            {% for skiday in event.getSkidays() %}
+                <h4>Journée du {{ skiday.getDayDate().format("d/m/Y")}} : {{ skiday.getDayType() }} ({{ skiday.getLocation() }})</h4>
+                <h5>Demandes de forfait</h5>
+                <ul>
+
+                    {% for skidayRacer in skiday.getSkidayRacers() %}
+                        {% if skidayRacer.isSkipassRacer() %}
+                            <li>{{ skidayRacer.getRacer().__toString() }}
+                                {% if skiday.getPriceYouthLimit() > 0 %}
+                                    {% if skidayRacer.getRacer().getAgeAtDay(skiday.getDayDate()) > skiday.getPriceYouthLimit() %}
+                                        Forfait adulte
+                                    {% else %}
+                                        Forfait junior
+                                    {% endif %}
+                                {% endif %}
+
+                                (+ {{ skidayRacer.getSkipassNonracerCount() }} non coureur)
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                <p>Soit {{ skiday.getSkipassCount('Adulte') }} forfait(s) coureur adulte, {{ skiday.getSkipassCount('Junior') }} forfait(s) coureur junior, et {{ skiday.getSkipassCount('Accompagnant') }} forfait(s) accompagnateur</p>
+
+                <h5>Entrainement</h5>
+                <ul>
+                    {% for skidayRacer in skiday.getSkidayRacers() %}
+                        {% if skidayRacer.isTrainingRacer() %}
+                            <li>{{ skidayRacer.getRacer().__toString() }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                <p>Soit {{ skiday.getTrainingCount('Racer') }} coureur(s) , {{ skiday.getTrainingCount('Coach') }} coach(s), et {{ skiday.getTrainingCount('Instructor') }} moniteur(s)</p>
+
+                <h5>Repas du midi</h5>
+                <ul>
+                    {% for skidayRacer in skiday.getSkidayRacers() %}
+                        {% if skidayRacer.isLunchRacer() %}
+                            <li>{{ skidayRacer.getRacer().__toString() }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                <p>Soit {{ skiday.getDinnerCount('Racer') }} repas coureur, et {{ skiday.getDinnerCount('Coach') }} repas coach</p>
+            {% else %}
+                <p><em>Pas de jour de ski défini pour cette période</em></p>
+            {% endfor %}
+        </div>
+            {% if routeName == 'day_summary'  %}<div class="col-md-6">{% else %}<div class="col-12">{% endif %}
+            <h3>Demandes de transport</h3>
+            {% for transport in event.getTransports() %}
+                <h4>Direction : {{ transport.getDirection() }}</h4>
+                <ul>
+                    {% for transportRacer in transport.getTransportRacers() %}
+                        <li>{{ transportRacer.getRacer().getName() }} {{ transportRacer.getRacer().getFamily().getName() }} (+ {{ transportRacer.getNonracerPlaceCount() }} non coureur)</li>
+                    {% endfor %}
+                </ul>
+                <p>Soit {{ transport.getCount('Racer') }} coureur(s), {{ transport.getCount('Coach') }} coach(s), et {{ transport.getCount('Accompagnant') }} accompagnateur(s)</p>
+            {% else %}
+                <p><em>Pas de transport défini pour cette période</em></p>
+            {% endfor %}
+
+            <h3>Demandes d'hébergement</h3>
+            {% for accomodation in event.getAccomodations() %}
+                <h4>Nuité du : {{ accomodation.getDayDate().format('d/m/Y') }} ({{ accomodation.getLocation() }})</h4>
+                <ul>
+                    {% for accomodationRacer in accomodation.getAccomodationRacers() %}
+                        <li>{{ accomodationRacer.getRacer().__toString() }} (+ {{ accomodationRacer.getNonracerPlaceCount() }} non coureur)</li>
+                    {% endfor %}
+                </ul>
+                <p>Soit {{ accomodation.getCount('Girl') }} fille(s), {{ accomodation.getCount('Boy') }} garçon(s), {{ accomodation.getCount('Coach') }} Coach(s),  et {{ accomodation.getCount('Accompagnant') }} accompagnateur(s)</p>
+            {% else %}
+                <p><em>Pas d'hébergement défini pour cette période</em></p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

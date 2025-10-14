@@ -1,0 +1,157 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Famille {{ family.name }}{% endblock %}
+
+{% block body %}
+
+
+
+    <h1>FAMILLE {{ family.name }}</h1>
+
+    <div class="container my-5">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="racers-tab" data-bs-toggle="tab" data-bs-target="#racers" type="button" role="tab" aria-controls="racers" aria-selected="true">Licenciés</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="adress-tab" data-bs-toggle="tab" data-bs-target="#adress" type="button" role="tab" aria-controls="adress" aria-selected="false">Adresse</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="contacts-tab" data-bs-toggle="tab" data-bs-target="#contacts" type="button" role="tab" aria-controls="contacts" aria-selected="false">Contacts</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="compta-tab" data-bs-toggle="tab" data-bs-target="#compta" type="button" role="tab" aria-controls="compta" aria-selected="false">Compta</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="emploi-tab" data-bs-toggle="tab" data-bs-target="#emploi" type="button" role="tab" aria-controls="emploi" aria-selected="false">Mode d'emploi</button>
+            </li>
+        </ul>
+
+        <div class="tab-content mt-3" id="myTabContent">
+            <div class="tab-pane fade show active" id="racers" role="tabpanel" aria-labelledby="racers-tab">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Numéro de licence</th>
+                        <th>Prénom </th>
+                        <th>Date de naissance</th>
+                        <th>Catégorie</th>
+                        <th>License</th>
+                        <th>License active ?</th>
+                        <th>Club ?</th>
+                        <th>Medical ?</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for racer in racers %}
+                    <tr>
+                        <td><a href="#">{{ racer.licenseNumber }}</a></td>
+                        <td>{{ racer.name }}</td>
+                        <td>{{ racer.birthDate |date('d/m/Y')}}</td>
+                        <td>{{ racer.getFfsCategory() }}</td>
+                        <td>{{ racer.getLicenseType() }}</td>
+                        <td>{{ racer.isLicenseActivated() }}</td>
+                        <td>{{ racer.isClubActivated() }}</td>
+                        <td>{{ racer.isMedicalActivated() }}</td>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="adress" role="tabpanel" aria-labelledby="adress-tab">
+                <h3>Fiche famille : informations générales </h3>
+                <ul class="list-group">
+                    <li class="list-group-item"><span class="text-info">Adresse (ligne1) : </span>{{ family.adress1 }}</li>
+                    <li class="list-group-item"><span class="text-info">Adresse (ligne2) : </span>{{ family.adress2 }}</li>
+                    <li class="list-group-item"><span class="text-info">Code postal : </span>{{ family.codepos }}</li>
+                    <li class="list-group-item"><span class="text-info">Ville : </span>{{ family.city }} </li>
+                </ul>
+            </div>
+            <div class="tab-pane fade" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Type </th>
+                        <th>Valeur</th>
+                        <th>Action</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for contact in family.contacts %}
+                    <tr>
+                        <td>{{ contact.type }}</td>
+                        <td>{{ contact.value}}</td>
+                        <td><a href="#" >Modifier</a></td>
+                        <td><a href="#" >Supprimer</a></td>
+
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="compta" role="tabpanel" aria-labelledby="compta-tab">
+                {% if accountingPosition >= 0 %}
+                <div class="alert alert-success" role="alert">
+                    Position du compte : {{ accountingPosition|number_format(2, '.') }}€
+                </div>
+                {% else %}
+                <div class="alert alert-danger" role="alert">
+                    Position du compte : {{ accountingPosition|number_format(2, '.') }}€ ... veuillez à créditer votre compte au plus vite.
+                </div>
+                {% endif %}
+                <p>Détail des mouvements :</p>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Date </th>
+                        <th>Type</th>
+                        <th>Valeur</th>
+                        <th>Raison</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for accounting in accountings %}
+                    <tr>
+                        <td>{{ accounting.ImputationDate|format_datetime('full', 'short', locale='fr') }}</td>
+
+                        <td>
+                            {% if accounting.family %}
+                                Mouvement famille
+                            {% else %}
+                                Mouvement {{ accounting.racer.name }}
+                            {% endif %}
+                        </td>
+                        <td>{{ accounting.value|number_format(2, '.') }}€</td>
+                        <td>{{ accounting.reason }}</td>
+
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="emploi" role="tabpanel" aria-labelledby="emploi-tab">
+                <h3>Onglet LICENCIES</h3>
+                <p>Cet onglet présente la liste des licenciés enregistrés pour la famille courante. Vous pouvez cliquer sur le numéro de licence pour accéder à la fiche licencié.</p>
+
+                <h3>Onglet ADRESSE</h3>
+                <p>Cet onglet présente l'adresse enregistrée pour la famille. Si elle est inexacte, vous pouvez la modifier en cliquant sur le bouton "Modifier"</p>
+                <h3>Onglet CONTACT</h3>
+                <p>Cet onglet présente la liste des contacts. Vous pouvez en ajouter, en retirer et modifier les éléments existants.</p>
+                <div class="bg-primary"><p>IMPORTANT : </p>
+                    <ul>
+                        <li>Toute la communication au sein du club s'appuiera sur ces éléments (emails, appels d'urgence etc.). Il vous appartient donc de maintenir ceci à jour en permanence.</li>
+                        <li>Ne pas modifier le contact nommé "Login" car il est nécessaire pour vous permettre d'accéder au site SPS.</li>
+                    </ul>
+                </div>
+                <h3>Onglet COMPTA</h3>
+                <p>Cet onglet présente les débits et crédits sur le compte famille. <p>
+                <p>Les lignes commençant par "Mouvement famille" correspondent aux crédits et aux débits généraux pour la famille.</p>
+                <p>Les lignes commençant par "Mouvement XXXX" correspondent aux débits enregistrée pour le licencié XXXX</p>
+                <p>Pour les familles avec parents séparés, nous nous efforceront de préciser la provenance de chaque crédit. Nous vous laissons le soin de gérer les débits et re-crédit entre vous.</p>
+                <p>Si vous constatez une anomalie, merci de nous prévenir au plus vite par <a href="mailto:so@ski-aix.com">email</a>.</p>
+                <h3>Autre</h3>
+                <p>Si cette aide n'a pas apporté de réponse à votre question, vous pouvez nous demander plus de précisions par <a href="mailto:ec@ski-aix.com">email</a>.</p>
+            </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

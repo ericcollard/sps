@@ -1,0 +1,26 @@
+App\Entity\Transport:
+    t1a:
+        direction: 'Aller'
+        event : '@S1'
+    t1r:
+        direction: 'Retour'
+        event: '@S1'
+    t2a:
+        direction: 'Aller'
+        event : '@S2'
+    t2r:
+        direction: 'Retour'
+        event: '@S2'
+    t3a:
+        direction: 'Aller'
+        event : '@S3'
+    t3r:
+        direction: 'Retour'
+        event: '@S3'
+    t4a:
+        direction: 'Aller'
+        event : '@S4'
+    t4r:
+        direction: 'Retour'
+        event: '@S4'
+

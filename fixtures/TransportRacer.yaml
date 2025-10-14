@@ -1,0 +1,26 @@
+App\Entity\TransportRacer:
+    tr1:
+        transport: '@t1a'
+        racer : '@LOUANN'
+        racerPlace: true
+        nonracerPlaceCount: 1
+        availablePlaceCount: 0
+    tr2:
+        transport: '@t1r'
+        racer : '@LOUANN'
+        racerPlace: true
+        nonracerPlaceCount: 0
+        availablePlaceCount: 0
+    tr3:
+        transport: '@t2a'
+        racer : '@LOUANN'
+        racerPlace: true
+        nonracerPlaceCount: 0
+        availablePlaceCount: 0
+    tr4:
+        transport: '@t2r'
+        racer : '@LOUANN'
+        racerPlace: true
+        nonracerPlaceCount: 1
+        availablePlaceCount: 0
+

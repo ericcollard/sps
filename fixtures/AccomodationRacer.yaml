@@ -1,0 +1,11 @@
+App\Entity\AccomodationRacer:
+    ar1:
+        accomodation: '@AcS1'
+        racer: '@LOUANN'
+        racerPlace: true
+        nonracerPlaceCount: 0
+    ar2:
+        accomodation: '@AcS2'
+        racer: '@LOUANN'
+        racerPlace: true
+        nonracerPlaceCount: 1

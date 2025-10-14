@@ -1,0 +1,98 @@
+App\Entity\Racer:
+    LOUANN:
+        family: '@PY'
+        name: LOU-ANN
+        licenseNumber: 2675833
+        sex: Fille
+        birthDate: <(new \DateTime('2007-7-20'))>
+        size: 135
+        weight: 32
+        applyActivated: 1
+        medicalActivated: 1
+        licenseType: Compétition Junior
+        isSkiInstructor: 0
+    VANESSA:
+        family: '@PY'
+        name: VANESSA
+        licenseNumber: PC11567569
+        sex: Fille
+        birthDate: <(new \DateTime('1972-6-28'))>
+        size: 175
+        weight: 58
+        applyActivated: 0
+        medicalActivated: 1
+        licenseType: Dirigent optimum
+        isSkiInstructor: 0
+        isracer : 0
+    FREDERIC:
+        family: '@PY'
+        name: FREDERIC
+        licenseNumber: 2684094
+        sex: Garçon
+        birthDate: <(new \DateTime('1970-6-30'))>
+        size: 188
+        weight: 73
+        applyActivated: 0
+        medicalActivated: 1
+        licenseType: Dirigent optimum
+        isSkiInstructor: 0
+        isracer : 0
+    ARTHUR:
+        family: '@PY'
+        name: ARTHUR
+        licenseNumber: 2648863
+        sex: Garçon
+        birthDate: <(new \DateTime('1998-8-8'))>
+        size: 175
+        weight: 60
+        applyActivated: 1
+        medicalActivated: 1
+        licenseType: Compétition Adulte
+        isSkiInstructor: 0
+    GUILLAUME:
+        family: '@RACCASI'
+        name: GUILLAUME
+        licenseNumber: 2605020
+        sex: Garçon
+        birthDate: <(new \DateTime('1979-11-2'))>
+        size: 185
+        weight: 85
+        applyActivated: 0
+        medicalActivated: 0
+        licenseType: Compétition Adulte
+        isSkiInstructor: 0
+    ERICVUL:
+        family: '@VULTAGGIO'
+        name: ERIC
+        licenseNumber: EVUXXXXXX
+        sex: Garçon
+        birthDate: <(new \DateTime('1977-1-2'))>
+        applyActivated: 1
+        medicalActivated: 0
+        licenseType: Dirigeant Primo
+        isSkiInstructor: 0
+        isracer : 0
+    NOELIE:
+        family: '@VULTAGGIO'
+        name: NOELIE
+        licenseNumber: 1051268
+        sex: Fille
+        birthDate: <(new \DateTime('2007-6-24'))>
+        size: 130
+        weight: 29
+        applyActivated: 1
+        medicalActivated: 1
+        licenseType: Compétition Junior
+        isSkiInstructor: 0
+    TIMEO:
+        family: '@VULTAGGIO'
+        name: TIMEO
+        licenseNumber: 2682306
+        sex: Garçon
+        birthDate: <(new \DateTime('2008-8-13'))>
+        size: 130
+        weight: 27
+        applyActivated: 1
+        medicalActivated: 1
+        licenseType: Compétition Junior
+        isSkiInstructor: 0

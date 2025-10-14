@@ -1,0 +1,22 @@
+App\Entity\SkidayRacer:
+    sdr1:
+        racer: '@LOUANN'
+        skiday: '@vsd1'
+        trainingRacer: true
+        skipassRacer: false
+        lunchRacer: true
+        skipassNonracerCount: 1
+    sdr2:
+        racer: '@LOUANN'
+        skiday: '@vsd2'
+        trainingRacer: true
+        skipassRacer: false
+        lunchRacer: true
+        skipassNonracerCount: 0
+    sdr3:
+        racer: '@LOUANN'
+        skiday: '@vsd3'
+        trainingRacer: true
+        skipassRacer: false
+        lunchRacer: true
+        skipassNonracerCount: 0

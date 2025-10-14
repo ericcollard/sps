@@ -2,16 +2,85 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
         {% block stylesheets %}
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
         {% endblock %}
 
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
+
+            <script src="https://kit.fontawesome.com/7af124e595.js" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
         {% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+    <div class="container">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">SCPA Panning System</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="{{ path('homepage') }}">Home</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" aria-current="page" href="{{ path('app_family') }}">Familles</a></li>
+                        <li class="nav-item"><a class="nav-link" aria-current="page" href="{{ path('app_planning') }}">Planning</a></li>
+                        <li class="nav-item"><a class="nav-link" aria-current="page" href="#">Aide</a></li>
+                        <li class="nav-item"><a class="nav-link" aria-current="page" href="/admin">Admin</a></li>
+                    </ul>
+                    <ul class="navbar-nav mb-2 mb-lg-0 d-flex">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-solid fa-user"></i>
+                                {% if app.user %}
+                                    {{ app.user.email }}
+                                {% else %}
+                                    Invité
+                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu">
+                                {% if app.user %}
+                                    <li><a class="dropdown-item" href="#">Profil</a></li>
+                                    <li><a class="dropdown-item" href="#">Mise à jour profil</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#">Changer de mot de passe</a></li>
+                                    <li><a class="dropdown-item" href="/logout">Se déconnecter</a></li>
+                                {% else %}
+                                    <li><a class="dropdown-item" href="/login">Login</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <main>
+            {% block body %}{% endblock %}
+        </main>
+
+
+        <footer class="footer mt-auto bg-body-tertiary fixed-bottom">
+            <div class="container">
+                <span class="text-body-secondary">Scpa Planning System - &copy; 2025 Eric COLLARD - GlissAttitude.</span>
+            </div>
+        </footer>
+    </div>
+
     </body>
 </html>

@@ -1,0 +1,49 @@
+App\Entity\Contact:
+    c17:
+        type: Email père
+        family: '@PY'
+        value: frederic.py@wanadoo.fr
+    c18:
+        type: Email père
+        family: '@RACCASI'
+        value: g.raccasi@orange.fr
+    c22:
+        type: Email père
+        family: '@VULTAGGIO'
+        value: eric.vultaggio@free.fr
+    c33:
+        type: Email mère
+        family: '@VULTAGGIO'
+        value: isa.vultaggio@hotmail.fr
+    c41:
+        type: Email mère
+        family: '@PY'
+        value: vanessa  c1:ferrand@orange.fr
+    c62:
+        type: Email coureur
+        family: '@PY'
+        value: tutur13770@gmail.com
+    c68:
+        type: Téléphone coureur
+        family: '@PY'
+        value: 06 13 22 95 16
+    c85:
+        type: Téléphone coureur
+        family: '@RACCASI'
+        value: 06 82 15 24 48
+    c112:
+        type: Téléphone du père
+        family: '@VULTAGGIO'
+        value: 06 88 93 21 45
+    c116:
+        type: Téléphone de la mère
+        family: '@VULTAGGIO'
+        value: 06 09 15 27 98
+    c120:
+        type: Téléphone de la mère
+        family: '@PY'
+        value: 06 20 25 05 45
+    c135:
+        type: login
+        family: '@PY'
+        value: eric.collard@free.fr

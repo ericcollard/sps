@@ -1,0 +1,19 @@
+App\Entity\Accounting:
+    AC1:
+        reason: 'License'
+        value: -100
+        username: 'admin'
+        family: '@PY'
+        ImputationDate : '<(new DateTime("2025-10-25 18:23:00"))>'
+    AC2:
+        reason: 'Sortie 2'
+        value: -20
+        username: 'admin'
+        racer: '@LOUANN'
+        ImputationDate : '<(new DateTime("2025-12-15 22:30:00"))>'
+    AC3:
+        reason: 'Crédit début de saison'
+        value: 800
+        username: 'admin'
+        family: '@PY'
+        ImputationDate: '<(new DateTime("2025-09-29 12:10:00"))>'

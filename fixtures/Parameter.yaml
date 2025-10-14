@@ -1,0 +1,4 @@
+App\Entity\Parameter:
+    p_1:
+        name: 'RegisterSecurityCode'
+        StringValue: 'Scpa2025'

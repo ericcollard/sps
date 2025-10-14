@@ -1,0 +1,42 @@
+App\Entity\Event:
+    vac_toussaint:
+        title: 'Toussaint'
+        startdate: <(new \DateTime('2025-10-18'))>
+        enddate: <(new \DateTime('2025-11-02'))>
+        type : 'Vacances scolaires'
+    vac_noel:
+        title: 'Noel'
+        startdate: <(new \DateTime('2025-12-20'))>
+        enddate: <(new \DateTime('2026-01-04'))>
+        type : 'Vacances scolaires'
+    vac_fev:
+        title: 'Vacances d''hivers'
+        startdate: <(new \DateTime('2026-02-14'))>
+        enddate: <(new \DateTime('2026-03-01'))>
+        type: 'Vacances scolaires'
+    vac_paques:
+        title: 'Vacances de pâques'
+        startdate: <(new \DateTime('2026-04-11'))>
+        enddate: <(new \DateTime('2026-04-26'))>
+        type: 'Vacances scolaires'
+    S1:
+        title: 'Sortie 1'
+        startdate: <(new \DateTime('2025-11-23'))>
+        enddate: <(new \DateTime('2025-11-23'))>
+        type: 'Sortie SCPA'
+    S2:
+        title: 'Sortie 2'
+        startdate: <(new \DateTime('2025-11-29'))>
+        enddate: <(new \DateTime('2025-11-30'))>
+        type: 'Sortie SCPA'
+    S3:
+        title: 'Sortie 3'
+        startdate: <(new \DateTime('2025-12-6'))>
+        enddate: <(new \DateTime('2025-12-7'))>
+        type: 'Sortie SCPA'
+    S4:
+        title: 'Stage Noel'
+        startdate: <(new \DateTime('2025-12-22'))>
+        enddate: <(new \DateTime('2025-12-24'))>
+        type: 'Sortie SCPA'
+

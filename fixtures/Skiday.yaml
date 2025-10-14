@@ -1,0 +1,31 @@
+App\Entity\Skiday:
+    vsd1:
+        event: '@S1'
+        dayDate: <(new \DateTime('2025-11-23'))>
+        dayType: Entrainement
+        location: 'Montgenevre'
+        memo: 'memo de la journée'
+        priceYouth: 65
+        priceYouthLimit: 12
+        price : 122
+        lunchPrice: 15
+    vsd2:
+        event: '@S2'
+        dayDate: <(new \DateTime('2025-11-29'))>
+        dayType: Entrainement
+        location: 'Le Sauze'
+    vsd3:
+        event: '@S2'
+        dayDate: <(new \DateTime('2025-11-30'))>
+        dayType: Entrainement
+        location: 'Le Sauze'
+    vsd4:
+        event: '@S3'
+        dayDate: <(new \DateTime('2025-12-6'))>
+        dayType: Entrainement
+        location: 'Le Sauze'
+    vsd5:
+        event: '@S3'
+        dayDate: <(new \DateTime('2025-12-7'))>
+        dayType: Course
+        location: 'PraLoup'

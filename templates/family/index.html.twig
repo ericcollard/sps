@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Familles{% endblock %}
+
+{% block body %}
+
+    <div>
+        <h1>Liste des familles</h1>
+        <p>Voici la liste des familles actives à ce jour</p>
+    </div>
+
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Nom</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for family in families %}
+            <tr>
+                <td>{{ family.name }}</td>
+                <td>
+                    <div class="row">
+                        <a href="{{ path('family', { id: family.id }) }}" class="btn btn-primary btn-sm" ><i class="fa-solid fa-magnifying-glass"></i> Afficher</a>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}

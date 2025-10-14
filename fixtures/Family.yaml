@@ -1,0 +1,19 @@
+App\Entity\Family:
+    PY:
+        name: PY
+        adress1: '5 rue de l''Agnel'
+        adress2:
+        codepos: 13770
+        city: VENELLES
+    RACCASI:
+        name: RACCASI
+        adress1: 891 Av Jean Moulin
+        adress2:
+        codepos: 13480
+        city: CALAS
+    VULTAGGIO:
+        name: VULTAGGIO
+        adress1: 494 route de Barjols
+        adress2:
+        codepos: 83143
+        city: LE VAL
