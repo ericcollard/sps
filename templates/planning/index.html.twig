@@ -39,7 +39,7 @@
         position: absolute;
         right: 0.5em;
         top: 0.5em;
-        z-index: 999;
+        z-index: 900;
         color: rgba(255,255,255,.7);
         cursor: pointer;
         padding: 0 0.5em;
@@ -178,7 +178,7 @@
         display: block;
         position: absolute;
         cursor: pointer;
-        z-index: 999;
+        z-index: 900;
     }
     .day-activity {
         color: dimgrey;
@@ -247,15 +247,20 @@
                         {{ familyRacer.getName() }}
                     </a>
                 </li>
+            {% else %}
+                <li>... Pas de skieur défini pour la famille</li>
             {% endfor %}
-
+    {% else %}
+        <li class="" style="margin-right: 20px">... Pas de famille liée au login courant </li>
     {% endif %}
+        {% if is_granted('ROLE_ADMIN') %}
         <li class="nav-item">
             <a class="nav-link {%  if racerId == 0 %}active{% endif %}" aria-current="page" href="{{ path('app_planning', {month: monthNum, year: year, racerId: 0}) }}">
                 <i class="fa-solid fa-screwdriver-wrench"></i>
-                Coach
+                Vue coach
             </a>
         </li>
+        {% endif %}
     </ul>
 
     <div class="global-wrapper d-lg-flex  mt-4">
@@ -382,7 +387,25 @@
                                             <i class="fa-solid fa-address-card" title="Forfait"></i>
                                         {% endif  %}
 
-
+                                        {% if racer and (
+                                            row[i]['night'] > -1
+                                            or row[i]['skipass'] > -1
+                                            or row[i]['dinner'] > -1
+                                            or row[i]['ski'] > -1
+                                            or row[i]['transportRetour'] > -1
+                                            or row[i]['transportAller'] > -1
+                                            )
+                                             %}
+                                        <a href="{{ path('SkidayOptions', {
+                                            racerId: racer.getId(),
+                                            skidayRacerId: row[i]['skidayRacerId'],
+                                            accomodationRacerId: row[i]['accomodationRacerId'],
+                                            transportRacerRetourId: row[i]['transportRacerRetourId'],
+                                            transportRacerAllerId: row[i]['transportRacerAllerId']
+                                        }) }}">
+                                        <i class="fa-solid fa-gears text-danger" title="options"></i>
+                                        </a>
+                                        {% endif  %}
                                     </div>
 
                                     <div class = "day-transport-down">

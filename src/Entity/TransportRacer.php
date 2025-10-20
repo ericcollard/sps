@@ -5,10 +5,14 @@ namespace App\Entity;
 use App\Repository\TransportRacerRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Timestampable;
+use Knp\DoctrineBehaviors\Contract\Entity\BlameableInterface;
+use Knp\DoctrineBehaviors\Model\Blameable\BlameableTrait;
 
 #[ORM\Entity(repositoryClass: TransportRacerRepository::class)]
-class TransportRacer
+class TransportRacer implements BlameableInterface
 {
+    use BlameableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

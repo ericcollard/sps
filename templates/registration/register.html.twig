@@ -4,34 +4,39 @@
 
 {% block body %}
 <div class="container">
-    <div class="row justify-content-md-center">
+    <div class="row  mt-5  justify-content-md-center">
         <div class="col-md-6">
+            <em>Certaines parties de ce site ne sont accessibles qu'aux utilisateurs inscrits.
+                Cette inscription nécessite un code de sécurité fourni par le club. Nous contacter
+                à ce sujet.
+            </em>
+            <div class="mt-5">
+            <h1>Inscription</h1>
 
-        <h1>Inscription</h1>
+            {{ form_errors(registrationForm) }}
 
-        {{ form_errors(registrationForm) }}
+            {{ form_start(registrationForm) }}
+            <div>
+                {{ form_row(registrationForm.email) }}
+            </div>
 
-        {{ form_start(registrationForm) }}
-        <div>
-            {{ form_row(registrationForm.email) }}
-        </div>
+            <div>
+                {{ form_row(registrationForm.plainPassword, {
+                    label: 'Mot de passe'
+                }) }}
+            </div>
 
-        <div>
-            {{ form_row(registrationForm.plainPassword, {
-                label: 'Mot de passe'
-            }) }}
-        </div>
+            <div>
+                {{ form_row(registrationForm.clubCode, {
+                    label: 'Code de sécurité (fourni par le club)'
+                }) }}
+            </div>
 
-        <div>
-            {{ form_row(registrationForm.clubCode, {
-                label: 'Code de sécurité (fourni par le club)'
-            }) }}
-        </div>
+            {{ form_end(registrationForm) }}
 
-        {{ form_end(registrationForm) }}
+            <p><a href="{{ path('app_login') }}">Déjà inscrit ? Me connecter</a></p>
 
-        <p><a href="{{ path('app_login') }}">Déjà inscrit ? Me connecter</a></p>
-
+            </div>
         </div>
     </div>
 </div>

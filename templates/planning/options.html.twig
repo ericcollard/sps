@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Options{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row  mt-5  justify-content-md-center">
+            <div class="col-md-6">
+                <em>Ce formulaire vous permet de mettre à jour les options de la journée de ski,
+                    qui ne sont pas accessibles via les icones du planning. La plupart de ces options
+                    se réfèrent à vos demandes liées aux personnes accompagnatrices potentielles (donc
+                    hors coureur)
+                </em>
+                <div class="mt-5">
+                    {% if 'dayDate' in infos|keys %}
+                        <h2>Journée du {{ infos['dayDate'].format('d/m/Y') }}</h2>
+                    {% endif %}
+
+                    {% if 'dayType' in infos|keys %}
+                        <p>Type de journée : {{ infos['dayType'] }}</p>
+                    {% endif %}
+
+                    {% if 'location' in infos|keys %}
+                        <p>Station : {{ infos['location'] }}</p>
+                    {% endif %}
+
+                    {% if 'accomodation' in infos|keys %}
+                        <p>Hébergement : {{ infos['accomodation'] }}</p>
+                    {% endif %}
+
+                    {% if 'racer' in infos|keys %}
+                        <p>Coureur : {{ infos['racer'] }}</p>
+                    {% endif %}
+
+                </div>
+                <div class="mt-5">
+                    <h1>Options de la journée de ski</h1>
+                    {{ form(form) }}
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

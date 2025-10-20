@@ -4,7 +4,7 @@
 
 {% block body %}
 <div class="container">
-    <div class="row justify-content-md-center">
+    <div class="row mt-5 justify-content-md-center">
         <div class="col-md-6">
             <form method="post">
         {% if error %}
@@ -16,8 +16,8 @@
                 Vous êtes déjà connecté en tant que {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Déconnecter</a>
             </div>
         {% endif %}
-
-        <h1 class="h3 mb-3 font-weight-normal">Me connecter</h1>
+                <em>Certaines parties de ce site ne sont accessibles qu'aux utilisateurs inscrits</em>
+        <h1 class="h3 mt-5 mb-3 font-weight-normal">Se connecter</h1>
         <label for="username">Email</label>
         <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="email" required autofocus>
         <label for="password">Mot de passe</label>
@@ -34,12 +34,12 @@
             </div>
         #}
 
-        <button class="btn btn-lg btn-primary" type="submit">
+        <button class="btn btn-lg btn-primary mt-4" type="submit">
             Valider
         </button>
 
 
-        <p><a href="{{ path('app_register') }}">Pas encore inscrit ? M'inscrire</a></p>
+        <p class="mt-3"><a href="{{ path('app_register') }}">Pas encore inscrit ? M'inscrire</a></p>
         <p><a href="{{  path('forgotten_password') }}">Mot de passe oublié</a></p>
     </form>
         </div>

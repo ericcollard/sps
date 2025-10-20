@@ -8,9 +8,11 @@ use App\Entity\Event;
 use App\Entity\Family;
 use App\Entity\Racer;
 use App\Entity\Skiday;
+use App\Entity\SkidayOptions;
 use App\Entity\SkidayRacer;
 use App\Entity\Transport;
 use App\Entity\TransportRacer;
+use App\Form\SkidayOptionsType;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use phpDocumentor\Reflection\Types\Integer;
@@ -233,6 +235,104 @@ final class PlanningController extends AbstractController
             'racer' => $racer,
             'family' => $family,
             'racerId' => $racerId
+        ]);
+    }
+
+    #[Route('/planning/SkidayOptions', name: 'SkidayOptions')]
+    public function SkidayOptions(Request $request,EntityManagerInterface $em): Response
+    {
+        // récupération des id
+        $racer = null;
+        $skidayRacer = null;
+        $accomodationRacer = null;
+        $transportAllerRacer = null;
+        $transportRetourRacer = null;
+        $skidayOptions = new SkidayOptions();
+
+
+
+        if ($request->query->get('skidayRacerId')) $skidayOptions->skidayRacerId = (int)$request->query->get('skidayRacerId');
+        if ($request->query->get('accomodationRacerId')) $skidayOptions->accomodationRacerId = (int)$request->query->get('accomodationRacerId');
+        if ($request->query->get('transportRacerAllerId')) $skidayOptions->transportRacerAllerId = (int)$request->query->get('transportRacerAllerId');
+        if ($request->query->get('transportRacerRetourId')) $skidayOptions->transportRacerRetourId = (int)$request->query->get('transportRacerRetourId');
+        if ($request->query->get('racerId')) $skidayOptions->racerId = (int)$request->query->get('racerId');
+
+        if ($skidayOptions->racerId > -1) $racer = $em->getRepository(Racer::class)->find($skidayOptions->racerId);
+        if ($skidayOptions->skidayRacerId > -1) $skidayRacer = $em->getRepository(SkidayRacer::class)->find($skidayOptions->skidayRacerId);
+        if ($skidayOptions->accomodationRacerId > -1) $accomodationRacer = $em->getRepository(AccomodationRacer::class)->find($skidayOptions->accomodationRacerId);
+        if ($skidayOptions->transportRacerAllerId > -1) $transportAllerRacer = $em->getRepository(TransportRacer::class)->find($skidayOptions->transportRacerAllerId);
+        if ($skidayOptions->transportRacerRetourId > -1) $transportRetourRacer = $em->getRepository(TransportRacer::class)->find($skidayOptions->transportRacerRetourId);
+
+        $infos = [];
+
+
+
+        if ($skidayRacer)
+        {
+            $infos['dayDate']= $skidayRacer->getSkiday()->getDayDate();
+            $infos['dayType']= $skidayRacer->getSkiday()->getDayType();
+            $infos['location']= $skidayRacer->getSkiday()->getLocation();
+            $infos['racer']= $skidayRacer->getRacer()->__toString();
+            $skidayOptions->skipassNonracerCount = $skidayRacer->getSkipassNonracerCount();
+        }
+        if ($accomodationRacer)
+        {
+            $infos['accomodation']= $accomodationRacer->getAccomodation()->getLocation();
+            $skidayOptions->accomodationNonracerPlaceCount = $accomodationRacer->getNonracerPlaceCount();
+        }
+        if ($transportAllerRacer)
+        {
+            $skidayOptions->transportAllerNonracerPlaceCount = $transportAllerRacer->getNonracerPlaceCount();
+            $skidayOptions->transportAllerAvailablePlaceCount = $transportAllerRacer->getAvailablePlaceCount();
+        }
+        if ($transportRetourRacer)
+        {
+            $skidayOptions->transportRetourNonracerPlaceCount = $transportRetourRacer->getNonracerPlaceCount();
+            $skidayOptions->transportRetourAvailablePlaceCount = $transportRetourRacer->getAvailablePlaceCount();
+        }
+
+
+        $form = $this->createForm(SkidayOptionsType::class,$skidayOptions);
+
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $skidayOptions = $form->getData();
+
+            if ($skidayOptions->skipassNonracerCount > -1)
+            {
+                $skidayRacer = $em->getRepository(SkidayRacer::class)->find($skidayOptions->skidayRacerId);
+                $skidayRacer->setSkipassNonracerCount($skidayOptions->skipassNonracerCount);
+            }
+            if ($skidayOptions->accomodationNonracerPlaceCount > -1)
+            {
+                $accomodationRacer = $em->getRepository(AccomodationRacer::class)->find($skidayOptions->accomodationRacerId);
+                $accomodationRacer->setNonracerPlaceCount($skidayOptions->accomodationNonracerPlaceCount);
+            }
+            if ($skidayOptions->transportAllerNonracerPlaceCount > -1 or $skidayOptions->transportAllerAvailablePlaceCount > -1)
+            {
+                $transportAllerRacer = $em->getRepository(TransportRacer::class)->find($skidayOptions->transportRacerAllerId);
+                $transportAllerRacer->setNonracerPlaceCount($skidayOptions->transportAllerNonracerPlaceCount);
+                $transportAllerRacer->setAvailablePlaceCount($skidayOptions->transportAllerAvailablePlaceCount);
+            }
+            if ($skidayOptions->transportRetourNonracerPlaceCount > -1 or $skidayOptions->transportRetourAvailablePlaceCount > -1)
+            {
+                $transportRetourRacer = $em->getRepository(TransportRacer::class)->find($skidayOptions->transportRacerRetourId);
+                $transportRetourRacer->setNonracerPlaceCount($skidayOptions->transportRetourNonracerPlaceCount);
+                $transportRetourRacer->setAvailablePlaceCount($skidayOptions->transportRetourAvailablePlaceCount);
+            }
+
+            $em->flush();
+
+            return $this->redirectToRoute('app_planning',[
+                'racerId'=> $skidayOptions->racerId,
+                'month'=> (int)$infos['dayDate']->format('m'),
+                'year'=> (int)$infos['dayDate']->format('Y'),
+            ]);
+        }
+
+        return $this->render('planning/options.html.twig', [
+            'form' => $form, 'infos' => $infos
         ]);
     }
 
