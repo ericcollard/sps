@@ -5,14 +5,14 @@ App\Entity\SkidayRacer:
         trainingRacer: true
         skipassRacer: false
         lunchRacer: true
-        skipassNonracerCount: 1
+        skipassNonracerCount: 0
     sdr2:
         racer: '@LOUANN'
         skiday: '@vsd2'
         trainingRacer: true
-        skipassRacer: false
+        skipassRacer: true
         lunchRacer: true
-        skipassNonracerCount: 0
+        skipassNonracerCount: 1
     sdr3:
         racer: '@LOUANN'
         skiday: '@vsd3'

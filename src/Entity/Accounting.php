@@ -19,6 +19,9 @@ class Accounting implements BlameableInterface
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTime $ImputationDate = null;
+
     #[ORM\Column(length: 255)]
     private ?string $reason = null;
 
@@ -36,8 +39,9 @@ class Accounting implements BlameableInterface
     #[ORM\JoinColumn(nullable: true)]
     private ?Racer $racer = null;
 
-    #[ORM\Column(type: 'datetime')]
-    private ?\DateTime $ImputationDate = null;
+    #[ORM\ManyToOne(inversedBy: 'accountings')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Event $event = null;
 
     #[ORM\Column]
     #[Timestampable(on: 'create')]
@@ -46,6 +50,8 @@ class Accounting implements BlameableInterface
     #[ORM\Column]
     #[Timestampable(on: 'update')]
     private ?\DateTimeImmutable $updatedAt = null;
+
+
 
     public function getId(): ?int
     {
@@ -144,6 +150,18 @@ class Accounting implements BlameableInterface
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): static
+    {
+        $this->event = $event;
 
         return $this;
     }

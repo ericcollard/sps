@@ -31,7 +31,7 @@ class AccomodationCrudController extends AbstractCrudController
         yield Field::new('dayDate',"Date");
         yield AssociationField::new('event','Sortie');
         yield Field::new('location',"Lieu d'hébergement");
-        yield Field::new('price',"Tarif de la nuité");
+        yield Field::new('price',"Tarif de la nuité hors coureur");
 
     }
 

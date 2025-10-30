@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Timestampable;
 use Knp\DoctrineBehaviors\Contract\Entity\BlameableInterface;
 use Knp\DoctrineBehaviors\Model\Blameable\BlameableTrait;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[ORM\Entity(repositoryClass: RacerRepository::class)]
 class Racer implements BlameableInterface

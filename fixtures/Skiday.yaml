@@ -5,20 +5,24 @@ App\Entity\Skiday:
         dayType: Entrainement
         location: 'Montgenevre'
         memo: 'memo de la journée'
-        priceYouth: 65
-        priceYouthLimit: 12
-        price : 122
+        skipassYouthLimit: 12
+        skipassPrice : 42
         lunchPrice: 15
     vsd2:
         event: '@S2'
         dayDate: <(new \DateTime('2025-11-29'))>
         dayType: Entrainement
         location: 'Le Sauze'
+        skipassYouthLimit: 12
+        skipassPrice: 32
+        lunchPrice: 18
     vsd3:
         event: '@S2'
         dayDate: <(new \DateTime('2025-11-30'))>
         dayType: Entrainement
-        location: 'Le Sauze'
+        location: 'MONTGENEVRE'
+        skipassYouthLimit: 12
+        skipassPrice: 42
     vsd4:
         event: '@S3'
         dayDate: <(new \DateTime('2025-12-6'))>

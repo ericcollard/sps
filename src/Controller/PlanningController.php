@@ -4,8 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Accomodation;
 use App\Entity\AccomodationRacer;
+use App\Entity\Accounting;
 use App\Entity\Event;
+use App\Entity\EventRacer;
 use App\Entity\Family;
+use App\Entity\Parameter;
+use App\Entity\Pricetemplate;
 use App\Entity\Racer;
 use App\Entity\Skiday;
 use App\Entity\SkidayOptions;
@@ -13,6 +17,7 @@ use App\Entity\SkidayRacer;
 use App\Entity\Transport;
 use App\Entity\TransportRacer;
 use App\Form\SkidayOptionsType;
+use App\Repository\TransportRacerRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use phpDocumentor\Reflection\Types\Integer;
@@ -21,6 +26,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Config\TwigExtra\StringConfig;
+use function PHPUnit\Framework\isNull;
+use function PHPUnit\Framework\throwException;
 
 final class PlanningController extends AbstractController
 {
@@ -238,9 +247,54 @@ final class PlanningController extends AbstractController
         ]);
     }
 
+    public function checkEditCredentials($racer,EntityManagerInterface $em)
+    {
+        if ($racer)
+        {
+            $authUserfamily = $em->getRepository(Family::class)->findOneByLogin($this->getUser()->getEmail());
+            if ($authUserfamily->getId() != $racer->getFamily()->getId())
+                throw new AccessDeniedException('Opération interdite pour un coureur hors famille connectée !');
+        }
+        else
+        {
+            throw new AccessDeniedException('Opération interdite si pas de coureur sélectionné');
+        }
+    }
+
+    public function checkEditDelay(DateTime $eventDate,EntityManagerInterface $em)
+    {
+        // ok si plus de délais entre $eventDate et la date courante que le nombre de jours défini dans le paramètre
+        $lockDelay = $em->getRepository(Parameter::class)->getLockDelay();
+        $currenTimestamp = time();
+        $eventTimestamp = $eventDate->getTimestamp();
+
+        $delta = ($eventTimestamp - $currenTimestamp)/86400;
+        if ($delta > $lockDelay)
+            return true;
+        else
+            return false;
+    }
+
+    public function verifyEventRacerOrCreate(Event $event, Racer $racer, EntityManagerInterface $em)
+    {
+        $eventRacer = $em->getRepository(EventRacer::class)->findOneByEventAndRacer($event,$racer);
+        if (!$eventRacer)
+        {
+            $eventRacer = (new EventRacer())
+                ->setEvent($event)
+                ->setRacer($racer)
+                ->setValidated(false)
+            ;
+            $em->persist($eventRacer);
+            $em->flush();
+        }
+    }
+
     #[Route('/planning/SkidayOptions', name: 'SkidayOptions')]
     public function SkidayOptions(Request $request,EntityManagerInterface $em): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         // récupération des id
         $racer = null;
         $skidayRacer = null;
@@ -263,9 +317,22 @@ final class PlanningController extends AbstractController
         if ($skidayOptions->transportRacerAllerId > -1) $transportAllerRacer = $em->getRepository(TransportRacer::class)->find($skidayOptions->transportRacerAllerId);
         if ($skidayOptions->transportRacerRetourId > -1) $transportRetourRacer = $em->getRepository(TransportRacer::class)->find($skidayOptions->transportRacerRetourId);
 
+        if (isNull($racer))
+        {
+            if ($skidayRacer)
+                $racer = $skidayRacer->getRacer();
+            elseif ($accomodationRacer)
+                $racer = $accomodationRacer->getRacer();
+            elseif ($transportAllerRacer)
+                $racer = $transportAllerRacer->getRacer();
+            elseif ($transportRetourRacer)
+                $racer = $transportAllerRacer->getRacer();
+        }
+
         $infos = [];
 
-
+        //check credential
+        $this->checkEditCredentials($racer,$em);
 
         if ($skidayRacer)
         {
@@ -339,20 +406,15 @@ final class PlanningController extends AbstractController
     #[Route('/planning/ToggleTransport/{transportRacerId}', name: 'ToggleTransport')]
     public function ToggleTransport(int $transportRacerId, Request $request,EntityManagerInterface $em): Response
     {
-        //$this->addFlash('success', 'ToggleTransport - id = '.$transportRacerId);
-
+        $transportRacer = null;
         if ($transportRacerId > 0)
         {
+            // Le transportRacer existe déjà
             $transportRacer = $em->getRepository(TransportRacer::class)->find($transportRacerId);
-            $transport = $transportRacer->getTransport();
-            if ($transportRacer->isRacerPlace())
-                $transportRacer->setRacerPlace(false);
-            else
-                $transportRacer->setRacerPlace(true);
-            $em->flush();
         }
         else
         {
+            // Le transportRacer n'existe pas -> le créer
             $transportId = (int)$request->query->get('transportId');
             $racerId = (int)$request->query->get('racerId');
             $transport = $em->getRepository(Transport::class)->find($transportId);
@@ -360,18 +422,33 @@ final class PlanningController extends AbstractController
             $transportRacer = (new TransportRacer())
                 ->setTransport($transport)
                 ->setRacer($racer)
-                ->setRacerPlace(true)
+                ->setRacerPlace(false)
                 ->setNonracerPlaceCount(0)
                 ->setAvailablePlaceCount(0);
-
             $em->persist($transportRacer);
             $em->flush();
         }
 
-        $direction = $transport->getDirection();
+        //A t on le droit de modifier ?
+        $this->checkEditCredentials($transportRacer->getRacer(),$em);
+        if (!$this->checkEditDelay($transportRacer->getTransport()->getEvent()->getStartdate(), $em))
+            throw new AccessDeniedException("Hors délais : il n'est plus possible de modifier cette sortie");
+
+        // créer le eventRacer si il n'existe pas
+        $this->verifyEventRacerOrCreate($transportRacer->getTransport()->getEvent(),$transportRacer->getRacer(),$em);
+
+        // Modification
+        if ($transportRacer->isRacerPlace())
+            $transportRacer->setRacerPlace(false);
+        else
+            $transportRacer->setRacerPlace(true);
+        $em->flush();
+
+        // Re-affichage après modification
+        $direction = $transportRacer->getTransport()->getDirection();
         $dayDate = new DateTime();
-        if ($direction == "Aller") $dayDate = $transport->getEvent()->getStartdate();
-        if ($direction == "Retour") $dayDate = $transport->getEvent()->getEnddate();
+        if ($direction == "Aller") $dayDate = $transportRacer->getTransport()->getEvent()->getStartdate();
+        if ($direction == "Retour") $dayDate = $transportRacer->getTransport()->getEvent()->getEnddate();
         $month = $dayDate->format("m");
         $year = $dayDate->format("Y");
         return $this->redirectToRoute('app_planning',[
@@ -382,39 +459,52 @@ final class PlanningController extends AbstractController
 
     }
 
+
+
     #[Route('/planning/ToggleAccomodation/{accomodationRacerId}', name: 'ToggleAccomodation')]
     public function ToggleAccomodation(int $accomodationRacerId, Request $request,EntityManagerInterface $em): Response
     {
-        //$this->addFlash('success', 'ToggleTransport - id = '.$transportRacerId);
-
+        $accomodationRacer = null;
         if ($accomodationRacerId > 0)
         {
+            // Le accomodationRacer existe déjà
             $accomodationRacer = $em->getRepository(AccomodationRacer::class)->find($accomodationRacerId);
-            $accomodation = $accomodationRacer->getAccomodation();
-            if ($accomodationRacer->isRacerPlace())
-                $accomodationRacer->setRacerPlace(false);
-            else
-                $accomodationRacer->setRacerPlace(true);
-            $em->flush();
         }
         else
         {
+            // Le accomodationRacer n'existe pas -> le créer
             $accomodationId = (int)$request->query->get('accomodationId');
             $accomodation = $em->getRepository(Accomodation::class)->find($accomodationId);
             $racerId = (int)$request->query->get('racerId');
             $racer = $em->getRepository(Racer::class)->find($racerId);
+
             $accomodationRacer = (new AccomodationRacer())
                 ->setAccomodation($accomodation)
                 ->setRacer($racer)
-                ->setRacerPlace(true)
+                ->setRacerPlace(false)
                 ->setNonracerPlaceCount(0);
 
             $em->persist($accomodationRacer);
             $em->flush();
         }
 
-        $dayDate = new DateTime();
-        $dayDate = $accomodation->getDayDate();
+        //A t on le droit de modifier ?
+        $this->checkEditCredentials($accomodationRacer->getRacer(),$em);
+        if (!$this->checkEditDelay($accomodationRacer->getAccomodation()->getDayDate(), $em))
+            throw new AccessDeniedException("Hors délais : il n'est plus possible de modifier cette sortie");
+
+        // créer le eventRacer si il n'existe pas
+        $this->verifyEventRacerOrCreate($accomodationRacer->getAccomodation()->getEvent(),$accomodationRacer->getRacer(),$em);
+
+        // Modification
+        if ($accomodationRacer->isRacerPlace())
+            $accomodationRacer->setRacerPlace(false);
+        else
+            $accomodationRacer->setRacerPlace(true);
+        $em->flush();
+
+
+        $dayDate = $accomodationRacer->getAccomodation()->getDayDate();
         $month = $dayDate->format("m");
         $year = $dayDate->format("Y");
         return $this->redirectToRoute('app_planning',[
@@ -430,44 +520,15 @@ final class PlanningController extends AbstractController
     #[Route('/planning/ToggleSkipass/{skidayRacerId}', name: 'ToggleSkipass')]
     public function ToggleSkiday(int $skidayRacerId, Request $request,EntityManagerInterface $em): Response
     {
-        $routeName = $request->attributes->get('_route');
-        //$this->addFlash('success', 'ToggleSkiday - rn = '.$routeName);
-
+        $skidayRacer = null;
         if ($skidayRacerId > 0)
         {
+            // Le skidayRacer existe déjà
             $skidayRacer = $em->getRepository(SkidayRacer::class)->find($skidayRacerId);
-            //$this->addFlash('success', 'ToggleSkiday - sr = '.$skidayRacer->getId());
-            if ($routeName == 'ToggleLunch')
-            {
-                if ($skidayRacer->isLunchRacer())
-                    $skidayRacer->setLunchRacer(false);
-                else
-                    $skidayRacer->setLunchRacer(true);
-            }
-            if ($routeName == 'ToggleSkipass')
-            {
-                if ($skidayRacer->isSkipassRacer())
-                    $skidayRacer->setSkipassRacer(false);
-                else
-                    $skidayRacer->setSkipassRacer(true);
-            }
-            if ($routeName == 'ToggleTraining')
-            {
-                if ($skidayRacer->isTrainingRacer())
-                {
-                    $skidayRacer->setTrainingRacer(false);
-                }
-                else
-                {
-                    $skidayRacer->setTrainingRacer(true);
-                }
-
-            }
-
-            $em->flush();
         }
         else
         {
+            // Le skidayRacer n'existe pas -> le créer
             $skidayId = (int)$request->query->get('skidayId');
             $skiday = $em->getRepository(Skiday::class)->find($skidayId);
             $racerId = (int)$request->query->get('racerId');
@@ -479,25 +540,50 @@ final class PlanningController extends AbstractController
                 ->setLunchRacer(false)
                 ->setTrainingRacer(false)
                 ->setSkipassNonracerCount(0);
-            if ($routeName == 'ToggleLunch')  $skidayRacer->setLunchRacer(true);
-            if ($routeName == 'ToggleTraining')
-            {
-                $skidayRacer->setTrainingRacer(true);
-            }
-            if ($routeName == 'ToggleSkipass')  $skidayRacer->setSkipassRacer(true);
-            if ($routeName == '')
-            {
-                if ($skidayRacer->isSkipassRacer())
-                    $skidayRacer->setSkipassRacer(false);
-                else
-                    $skidayRacer->setSkipassRacer(true);
-            }
 
             $em->persist($skidayRacer);
             $em->flush();
         }
 
-        $dayDate = new DateTime();
+        //A t on le droit de modifier ?
+        $this->checkEditCredentials($skidayRacer->getRacer(),$em);
+        if (!$this->checkEditDelay($skidayRacer->getSkiday()->getDayDate(), $em))
+            throw new AccessDeniedException("Hors délais : il n'est plus possible de modifier cette sortie");
+
+        // créer le eventRacer si il n'existe pas
+        $this->verifyEventRacerOrCreate($skidayRacer->getSkiday()->getEvent(),$skidayRacer->getRacer(),$em);
+
+
+        $routeName = $request->attributes->get('_route');
+        //$this->addFlash('success', 'ToggleSkiday - rn = '.$routeName);
+
+        if ($routeName == 'ToggleLunch')
+        {
+            if ($skidayRacer->isLunchRacer())
+                $skidayRacer->setLunchRacer(false);
+            else
+                $skidayRacer->setLunchRacer(true);
+        }
+        if ($routeName == 'ToggleSkipass')
+        {
+            if ($skidayRacer->isSkipassRacer())
+                $skidayRacer->setSkipassRacer(false);
+            else
+                $skidayRacer->setSkipassRacer(true);
+        }
+        if ($routeName == 'ToggleTraining')
+        {
+            if ($skidayRacer->isTrainingRacer())
+            {
+                $skidayRacer->setTrainingRacer(false);
+            }
+            else
+            {
+                $skidayRacer->setTrainingRacer(true);
+            }
+        }
+        $em->flush();
+
         $dayDate = $skidayRacer->getSkiday()->getDayDate();
         $month = $dayDate->format("m");
         $year = $dayDate->format("Y");
@@ -546,6 +632,216 @@ final class PlanningController extends AbstractController
             'routeName' => $routeName
 
         ]);
+    }
+
+    public function append(String &$base, String $add)
+    {
+        if (strlen($base) > 0)
+            $base = $base."|";
+
+        if (strlen($add) > 0)
+        {
+            $base = $base.$add;
+        }
+    }
+
+    public function ComputeImputation(Event $event, EntityManagerInterface $em)
+    {
+        $transports = $event->getTransports();
+        $accomodations  = $event->getAccomodations();
+        $skidays = $event->getSkidays();
+
+        // prix du transport unitaire
+        $transportCost = $em->getRepository(Parameter::class)->getTransportCost();
+        if ($transportCost == 0) throw $this->createNotFoundException('TransportCost non paramétré');
+
+        $racers = $em->getRepository(Racer::class)->findByEvent($event);
+
+        $racersData = [];
+
+        foreach ($racers as $racer)
+        {
+            $racerData['id'] = $racer->getId();
+            $racerData['name'] = $racer->__toString();
+            $racerData['memo'] = [];
+            $racerData['cntTransport'] = 0;
+            $racerData['transportCost'] = $transportCost;
+            $racerData['cntAccomodationR'] = 0;
+            $racerData['cntAccomodationNR'] = 0;
+            $racerData['accomodationNRCost'] = 0;
+            $racerData['cntLunch'] = 0;
+            $racerData['lunchCost'] = 0;
+            $racerData['cntSkipassR'] = 0;
+            $racerData['cntSkipassNR'] = 0;
+            $racerData['skipassNRCost'] = 0;
+            $racerData['cntTraining'] = 0;
+            $racerData['priceTemplateName'] = '';
+            $racerData['imputationDone'] = false;
+            $racerData['totalPrice'] = 0;
+
+
+            $eventRacer = $em->getRepository(EventRacer::class)->findOneByEventAndRacer($event,$racer);
+            if ($eventRacer)
+                $racerData['imputationDone'] = $eventRacer->isValidated();
+
+
+            foreach ($transports as $transport)
+            {
+                $transportRacer = $em->getRepository(TransportRacer::class)->getRacerRegistration($racer,$transport);
+                if ($transportRacer and $transportRacer->isRacerPlace())
+                {
+                    $racerData['memo'][] = "Transport ".$transport->getDirection()." 1 place coureur";
+                    $racerData['cntTransport']++;
+                }
+                if ($transportRacer and $transportRacer->getNonracerPlaceCount() > 0)
+                {
+                    $racerData['memo'][] = "Transport ".$transport->getDirection()." ".$transportRacer->getNonracerPlaceCount()." place(s) hors coureur";
+                    $racerData['cntTransport'] += $transportRacer->getNonracerPlaceCount();
+                }
+            }
+            foreach ($accomodations as $accomodation)
+            {
+                $accomodationRacer = $em->getRepository(AccomodationRacer::class)->getRacerRegistration($racer,$accomodation);
+                if ($accomodationRacer and $accomodationRacer->isRacerPlace())
+                {
+                    $racerData['memo'][] = "Hébergement le ".$accomodation->getDayDate()->format("d/m/Y")." 1 place coureur";
+                    $racerData['cntAccomodationR']++;
+                }
+                if ($accomodationRacer and $accomodationRacer->getNonracerPlaceCount())
+                {
+                    $racerData['memo'][] = "Hébergement le ".$accomodation->getDayDate()->format("d/m/Y")." ".$accomodationRacer->getNonracerPlaceCount() ." place(s) hors coureur à ".$accomodation->getPrice()."€";;
+                    $racerData['cntAccomodationNR'] += $accomodationRacer->getNonracerPlaceCount();
+                    if ($accomodation->getPrice() == 0) throw $this->createNotFoundException('Tarif nuité hors coureur non spécifiée pour cette soirée');
+                    $racerData['accomodationNRCost'] +=$accomodation->getPrice() * $accomodationRacer->getNonracerPlaceCount();
+
+                }
+            }
+            foreach ($skidays as $skiday)
+            {
+                $skidayRacer = $em->getRepository(SkidayRacer::class)->getRacerRegistration($racer,$skiday);
+                if ($skidayRacer and $skidayRacer->isTrainingRacer())
+                {
+                    $racerData['memo'][] = "Entrainement le ".$skiday->getDayDate()->format("d/m/Y");
+                    $racerData['cntTraining']++;
+                }
+                if ($skidayRacer and $skidayRacer->isSkipassRacer())
+                {
+                    $racerData['memo'][] = "Forfait coureur le ".$skiday->getDayDate()->format("d/m/Y");
+                    $racerData['cntSkipassR']++;
+                }
+                if ($skidayRacer and $skidayRacer->getSkipassNonracerCount()>0)
+                {
+                    $racerData['memo'][] = $skidayRacer->getSkipassNonracerCount(). " Forfait(s) non coureur le ".$skiday->getDayDate()->format("d/m/Y")." à ".$skiday->getSkipassPrice()."€";
+                    $racerData['cntSkipassNR']+=$skidayRacer->getSkipassNonracerCount();
+                    $racerData['skipassNRCost'] +=$skidayRacer->getSkipassNonracerCount() * $skiday->getSkipassPrice();
+                }
+                if ($skidayRacer and $skidayRacer->isLunchRacer())
+                {
+                    $racerData['cntLunch']++;
+                    if ($skiday->getLunchPrice())
+                    {
+                        $racerData['lunchCost']+=$skiday->getLunchPrice();
+                        $racerData['memo'][] = "Repas coureur le ".$skiday->getDayDate()->format("d/m/Y")." à ".$skiday->getLunchPrice()."€";
+                    }
+                    else
+                    {
+                        $defaultLunchCost = $em->getRepository(Parameter::class)->getDefaultLunchCost();
+                        if ($defaultLunchCost == 0) throw $this->createNotFoundException('DefaultLunchCost non paramétré');
+                        $racerData['lunchCost']+=$defaultLunchCost;
+                        $racerData['memo'][] = "Repas coureur le ".$skiday->getDayDate()->format("d/m/Y")." à ".$defaultLunchCost."€ (par défaut)";
+
+                    }
+                }
+            }
+
+            // recherche du tarif correspondant
+            $priceTemplate = $em->getRepository(Pricetemplate::class)->findOneByParameters($racerData['cntTraining'], $racerData['cntAccomodationR'], $racerData['cntSkipassR']);
+            if ($priceTemplate)
+            {
+                $racerData['priceTemplateName'] = $priceTemplate->getName()." (".$priceTemplate->getPrice()."€)";
+            }
+            else
+            {
+                $racerData['priceTemplateName'] = "Pas de formule trouvé";
+            }
+
+            // Prix total
+            if ($priceTemplate)
+                $racerData['totalPrice'] = $racerData['lunchCost'] +
+                    $transportCost * $racerData['cntTransport'] +
+                    $priceTemplate->getPrice() +
+                    $racerData['skipassNRCost'] +
+                    $racerData['accomodationNRCost']
+                ;
+            else
+                $racerData['totalPrice'] = 'na.';
+
+            $racersData[] = $racerData;
+        }
+        return $racersData;
+
+    }
+
+    #[Route('/planning/imputation/{eventId}', name: 'imputation')]
+    public function ShowImputation(int $eventId, Request $request,EntityManagerInterface $em): Response
+    {
+        if ($eventId == 0)
+            throw $this->createNotFoundException('Sortie non spécifiée');
+        $event = $em->getRepository(Event::class)->find($eventId);
+
+        $racersData = $this->ComputeImputation($event, $em);
+
+        return $this->render('planning/imputation.html.twig',
+            [
+                'event'=>$event,
+                'racersData' => $racersData,
+        ]);
+    }
+
+    #[Route('/planning/imputate/{eventId}', name: 'apply_imputation')]
+    public function ApplyImputation(int $eventId, Request $request,EntityManagerInterface $em): Response
+    {
+        if ($eventId == 0)
+            throw $this->createNotFoundException('Sortie non spécifiée');
+        $event = $em->getRepository(Event::class)->find($eventId);
+        if (!$event)
+            throw $this->createNotFoundException('Erreur sps : Sortie non trouvée avec le code '.$eventId);
+
+        // calcule les données d'imputation
+        $racersData = $this->ComputeImputation($event, $em);
+
+        // nettoyage des éventuelles imputations déjà enregistrées pour cette sortie
+        foreach ($event->getAccountings() as $item)
+        {
+            $em->remove($item);
+        }
+        $em->flush();
+
+        foreach ($racersData as $racerData)
+        {
+            $racer = $em->getRepository(Racer::class)->find($racerData['id']);
+            if (!$event)
+                throw $this->createNotFoundException('Erreur sps : Coureur non trouvé avec le code '.$racerData['id']);
+            $accountingItem = new Accounting();
+            $accountingItem->setEvent($event);
+            $accountingItem->setImputationDate($event->getEnddate());
+            $accountingItem->setRacer($racer);
+            $accountingItem->setFamily($racer->getFamily());
+            $accountingItem->setUsername($this->getUser()->getEmail());
+            $accountingItem->setReason('Imputation sortie - '.$event->__toString().' - '.$racer->__toString());
+            $accountingItem->setValue(-$racerData['totalPrice']);
+            $em->persist($accountingItem);
+
+            $eventRacer = $em->getRepository(EventRacer::class)->findOneByEventAndRacer($event,$racer);
+            if (!$eventRacer)
+                throw $this->createNotFoundException('Erreur sps : Sortie Courreur non trouvée pour le coureur '.$racerData['id'].' sortie '.$eventId);
+            $eventRacer->setValidated(true);
+            //todo:valider l'imputation dans eventracer
+        }
+
+        $em->flush();
+        $this->addFlash('success','Imputation faite avec succès');
+        return $this->redirectToRoute("imputation",['eventId' => $event->getId()]);
     }
 
     public function getFrenchMonthName($monthNum): String

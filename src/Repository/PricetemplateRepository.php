@@ -31,13 +31,17 @@ class PricetemplateRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Pricetemplate
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        public function findOneByParameters($skidayCnt, $accomodationCnt, $skipassCnt): ?Pricetemplate
+        {
+            return $this->createQueryBuilder('p')
+                ->andWhere('p.skiday = :p1')
+                ->andWhere('p.accomodation = :p2')
+                ->andWhere('p.skipass = :p3')
+                ->setParameter('p1', $skidayCnt)
+                ->setParameter('p2', $accomodationCnt)
+                ->setParameter('p3', $skipassCnt)
+                ->getQuery()
+                ->getOneOrNullResult()
+            ;
+        }
 }

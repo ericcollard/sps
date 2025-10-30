@@ -34,13 +34,10 @@ class Skiday implements BlameableInterface
     private ?string $memo = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $priceYouth = null;
+    private ?int $skipassYouthLimit = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $priceYouthLimit = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?float $price = null;
+    private ?float $skipassPrice = null;
 
     #[ORM\Column(nullable: true)]
     private ?float $lunchPrice = null;
@@ -126,38 +123,26 @@ class Skiday implements BlameableInterface
         return $this;
     }
 
-    public function getPriceYouth(): ?float
+    public function getSkipassYouthLimit(): ?int
     {
-        return $this->priceYouth;
+        return $this->skipassYouthLimit;
     }
 
-    public function setPriceYouth(float $priceYouth): static
+    public function setSkipassYouthLimit(?int $skipassYouthLimit): static
     {
-        $this->priceYouth = $priceYouth;
+        $this->skipassYouthLimit = $skipassYouthLimit;
 
         return $this;
     }
 
-    public function getPriceYouthLimit(): ?int
+    public function getSkipassPrice(): ?float
     {
-        return $this->priceYouthLimit;
+        return $this->skipassPrice;
     }
 
-    public function setPriceYouthLimit(?int $priceYouthLimit): static
+    public function setSkipassPrice(?float $skipassPrice): static
     {
-        $this->priceYouthLimit = $priceYouthLimit;
-
-        return $this;
-    }
-
-    public function getPrice(): ?float
-    {
-        return $this->price;
-    }
-
-    public function setPrice(?float $price): static
-    {
-        $this->price = $price;
+        $this->skipassPrice = $skipassPrice;
 
         return $this;
     }
@@ -229,7 +214,7 @@ class Skiday implements BlameableInterface
             if ($skidayRacer->isSkipassRacer()) $NbPass  = 1;
             if ($NbPass > 0)
             {
-                if ($this->getPriceYouthLimit() > 0 and $racer->getAgeAtDay($skydayDate) <= $this->getPriceYouthLimit())
+                if ($this->getSkipassYouthLimit() > 0 and $racer->getAgeAtDay($skydayDate) <= $this->getSkipassYouthLimit())
                 {
                     // Junior
                     $countJunior+=$NbPass;

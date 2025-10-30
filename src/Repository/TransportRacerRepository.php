@@ -33,15 +33,16 @@ class TransportRacerRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-        public function getRacerRegistration(Racer $racer,Transport $transport): ?TransportRacer
-        {
-            return $this->createQueryBuilder('tr')
-                ->andWhere('tr.transport = :transport')
-                ->andWhere('tr.racer = :racer')
-                ->setParameter('transport', $transport)
-                ->setParameter('racer', $racer)
-                ->getQuery()
-                ->getOneOrNullResult()
-            ;
-        }
+
+    public function getRacerRegistration(Racer $racer,Transport $transport): ?TransportRacer
+    {
+        return $this->createQueryBuilder('tr')
+            ->andWhere('tr.transport = :transport')
+            ->andWhere('tr.racer = :racer')
+            ->setParameter('transport', $transport)
+            ->setParameter('racer', $racer)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }

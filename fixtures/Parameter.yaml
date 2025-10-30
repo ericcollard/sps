@@ -2,3 +2,12 @@ App\Entity\Parameter:
     p_1:
         name: 'RegisterSecurityCode'
         StringValue: 'Scpa2025'
+    p_2:
+        name: 'TransportCost'
+        NumericValue: 15.0
+    p_3:
+        name: 'DefaultLunchCost'
+        NumericValue: 22.0
+    p_4:
+        name: 'LockDelay'
+        NumericValue: 20.0

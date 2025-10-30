@@ -30,9 +30,8 @@ class SkidayCrudController extends AbstractCrudController
             ->setChoices(array_combine($choices, $choices));
 
         yield TextField::new('memo','Commentaire')->hideOnIndex();
-        yield Field::new('priceYouth','tarif forfait jeune')->setColumns(6)->hideOnIndex();
-        yield Field::new('priceYouthLimit','Age max forfait jeune (compris)')->setColumns(6)->hideOnIndex();
-        yield Field::new('price','Tarif journée')->setColumns(6);
+        yield Field::new('skipassYouthLimit','Age max forfait jeune (compris)')->setColumns(6)->hideOnIndex();
+        yield Field::new('skipassPrice','Tarif forfait journée (hors coureur)')->setColumns(6);
         yield Field::new('lunchPrice','Tarif repas')->setColumns(6);
     }
 

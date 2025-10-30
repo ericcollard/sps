@@ -67,6 +67,12 @@ class Event implements BlameableInterface
     #[Timestampable(on: 'update')]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    /**
+     * @var Collection<int, Accounting>
+     */
+    #[ORM\OneToMany(targetEntity: Accounting::class, mappedBy: 'event')]
+    private Collection $accountings;
+
 
     public function __construct()
     {
@@ -74,6 +80,7 @@ class Event implements BlameableInterface
         $this->Skidays = new ArrayCollection();
         $this->accomodations = new ArrayCollection();
         $this->transports = new ArrayCollection();
+        $this->accountings = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -286,6 +293,36 @@ class Event implements BlameableInterface
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Accounting>
+     */
+    public function getAccountings(): Collection
+    {
+        return $this->accountings;
+    }
+
+    public function addAccounting(Accounting $accounting): static
+    {
+        if (!$this->accountings->contains($accounting)) {
+            $this->accountings->add($accounting);
+            $accounting->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAccounting(Accounting $accounting): static
+    {
+        if ($this->accountings->removeElement($accounting)) {
+            // set the owning side to null (unless already changed)
+            if ($accounting->getEvent() === $this) {
+                $accounting->setEvent(null);
+            }
+        }
 
         return $this;
     }

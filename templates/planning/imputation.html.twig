@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Imputation{% endblock %}
+
+{% block body %}
+<h1>Imputation {{ event.getTitle() }}</h1>
+    <table  class="table table-success table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Nom</th>
+            <th scope="col">Transports</th>
+            <th scope="col">Repas</th>
+            <th scope="col">Cout repas</th>
+            <th scope="col">(Héberg C.</th>
+            <th scope="col">Entrain C.</th>
+            <th scope="col">Forfait C.)</th>
+            <th scope="col">Formule C.</th>
+            <th scope="col">Héberg NC</th>
+            <th scope="col">Forfaits NC</th>
+            <th scope="col">Prix total</th>
+            <th scope="col">Imputation faite ?</th>
+            <th scope="col">Détail</th>
+        </tr>
+
+        </thead>
+        <tbody>
+
+        {% for racerData in racersData %}
+            <tr>
+                <td>{{ racerData['name'] }}</td>
+                <td>{{ racerData['cntTransport'] }} x {{ racerData['transportCost'] }} €</td>
+                <td>{{ racerData['cntLunch'] }}</td>
+                <td>{{ racerData['lunchCost'] }}€</td>
+                <td>{{ racerData['cntAccomodationR'] }}</td>
+                <td>{{ racerData['cntTraining'] }}</td>
+                <td>{{ racerData['cntSkipassR'] }}</td>
+                <td>{{ racerData['priceTemplateName'] }}</td>
+                <td>{{ racerData['cntAccomodationNR'] }}</td>
+                <td>{{ racerData['cntSkipassNR'] }}</td>
+                <td>{{ racerData['totalPrice'] }}€</td>
+                <td>{% if racerData['imputationDone'] %}
+                        Oui
+                    {% else %}
+                        Non
+                    {% endif %}
+                </td>
+                <td>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detailModal{{ racerData['id'] }}">
+                        Détail
+                    </button>
+                    <!-- Modal -->
+                    <div class="modal fade" id="detailModal{{ racerData['id'] }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Détail imputation {{ racerData['name'] }}</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    {% for memo in racerData['memo'] %}
+                                        <p>{{ memo }}</p>
+                                    {% endfor %}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </td>
+
+            </tr>
+        </tbody>
+        {% endfor %}
+    </table>
+
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Valider l'imputation
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Imputation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Etes vous sur de valider cette imputation (retour arrière impossible. Si un imputation a déjà été faite, elle sera écrasée) ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <a type="button"
+                       class="btn btn-warning"
+                       href="{{ path('apply_imputation', {eventId: event.getId()}) }}"
+                    >Appliquer</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}

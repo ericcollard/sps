@@ -43,8 +43,8 @@
                     {% for skidayRacer in skiday.getSkidayRacers() %}
                         {% if skidayRacer.isSkipassRacer() %}
                             <li>{{ skidayRacer.getRacer().__toString() }}
-                                {% if skiday.getPriceYouthLimit() > 0 %}
-                                    {% if skidayRacer.getRacer().getAgeAtDay(skiday.getDayDate()) > skiday.getPriceYouthLimit() %}
+                                {% if skiday.getSkipassYouthLimit() > 0 %}
+                                    {% if skidayRacer.getRacer().getAgeAtDay(skiday.getDayDate()) > skiday.getSkipassYouthLimit() %}
                                         Forfait adulte
                                     {% else %}
                                         Forfait junior

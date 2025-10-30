@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Accounting;
+use App\Entity\Event;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

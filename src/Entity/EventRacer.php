@@ -21,12 +21,6 @@ class EventRacer implements BlameableInterface
     #[ORM\Column]
     private ?bool $validated = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?float $financeCorrection = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $financeCorrectionReason = null;
-
     #[ORM\ManyToOne(inversedBy: 'EventRacers')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Event $event = null;
@@ -60,29 +54,6 @@ class EventRacer implements BlameableInterface
         return $this;
     }
 
-    public function getFinanceCorrection(): ?float
-    {
-        return $this->financeCorrection;
-    }
-
-    public function setFinanceCorrection(?float $financeCorrection): static
-    {
-        $this->financeCorrection = $financeCorrection;
-
-        return $this;
-    }
-
-    public function getFinanceCorrectionReason(): ?string
-    {
-        return $this->financeCorrectionReason;
-    }
-
-    public function setFinanceCorrectionReason(?string $financeCorrectionReason): static
-    {
-        $this->financeCorrectionReason = $financeCorrectionReason;
-
-        return $this;
-    }
 
     public function getEvent(): ?Event
     {

@@ -23,4 +23,15 @@ App\Entity\TransportRacer:
         racerPlace: true
         nonracerPlaceCount: 1
         availablePlaceCount: 0
-
+    tr5:
+        transport: '@t2a'
+        racer : '@VANESSA'
+        racerPlace: true
+        nonracerPlaceCount: 0
+        availablePlaceCount: 0
+    tr6:
+        transport: '@t2r'
+        racer : '@VANESSA'
+        racerPlace: true
+        nonracerPlaceCount: 0
+        availablePlaceCount: 0

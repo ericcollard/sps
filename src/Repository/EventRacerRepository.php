@@ -31,13 +31,16 @@ class EventRacerRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?EventRacer
-    //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        public function findOneByEventAndRacer($event, $racer): ?EventRacer
+        {
+            return $this->createQueryBuilder('e')
+                ->andWhere('e.racer = :val1')
+                ->andWhere('e.event = :val2')
+                ->setParameter('val1', $racer)
+                ->setParameter('val2', $event)
+                ->getQuery()
+                ->getOneOrNullResult()
+            ;
+        }
+
 }

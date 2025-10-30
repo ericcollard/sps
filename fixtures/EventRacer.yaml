@@ -2,14 +2,12 @@ App\Entity\EventRacer:
     er1:
         racer: '@LOUANN'
         event: '@S1'
-        validated: true
-        financeCorrection: -20
-        financeCorrectionReason: "achat gouter"
+        validated: false
     er2:
         racer: '@LOUANN'
         event: '@S2'
-        validated: true
+        validated: false
     er3:
         racer: '@LOUANN'
         event: '@S3'
-        validated: true
+        validated: false

@@ -3,7 +3,9 @@ App\Entity\User:
         email: 'eric.collard@free.fr'
         password: <hashPassword('col244')>
         isVerified: True
+        roles: ['ROLE_ADMIN']
     user_2:
         email: 'eric@glissattitude.com'
         password: <hashPassword('col244')>
         isVerified: False
+        roles: ['ROLE_USER']

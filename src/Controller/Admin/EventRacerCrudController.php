@@ -32,8 +32,6 @@ class EventRacerCrudController extends AbstractCrudController
         yield AssociationField::new('event','Sortie');
         yield AssociationField::new('racer','Coureur');
         yield Field::new('validated',"Imputation validée");
-        yield Field::new('financeCorrection',"Correction imputation");
-        yield Field::new('financeCorrectionReason',"Correction imputation -  Motif");
 
     }
 }

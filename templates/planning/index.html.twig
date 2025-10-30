@@ -165,7 +165,7 @@
 
     .event-title a {
         color: rgba(255, 255, 255, 0.8);
-        text-decoration: none;
+        /*text-decoration: none;*/
     }
 
     .day-contend {
@@ -422,8 +422,8 @@
                                 </div>
 
                                 <div class="event-title">
-                                    {% if not racer %}
-                                        <a href="{{ path('day_summary', {eventId: row[i]['eventId']}) }}">{{ row[i]['eventTitle'] }}</a>
+                                    {% if not racer and is_granted('ROLE_ADMIN') and row[i]['eventTitle']|length > 0 %}
+                                        <a href="{{ path('day_summary', {eventId: row[i]['eventId']}) }}"><i class="fa-solid fa-lock"></i> {{ row[i]['eventTitle'] }}</a>
                                     {% else %}
                                         {{ row[i]['eventTitle'] }}
                                     {% endif %}

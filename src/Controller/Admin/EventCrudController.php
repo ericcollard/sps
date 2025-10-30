@@ -9,6 +9,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EventCrudController extends AbstractCrudController
 {
@@ -36,6 +39,26 @@ class EventCrudController extends AbstractCrudController
             ->setChoices(array_combine($choices, $choices));
         yield TextField::new('memo','Commentaire')->hideOnIndex();
 
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        $viewImputation = Action::new('viewImputation', 'Imputation sortie')
+            ->setIcon('fa fa-file-invoice')
+            ->asPrimaryAction()
+            ->linkToUrl(fn (Event $event) => '/planning/imputation/'.$event->getId())
+        ;
+
+        $viewSummary = Action::new('viewSummary', 'Fiche résumé sortie')
+            ->setIcon('fa fa-file-invoice')
+            ->asPrimaryAction()
+            ->linkToUrl(fn (Event $event) => '/planning/summary?eventId='.$event->getId())
+        ;
+
+        return $actions
+            ->add(Crud::PAGE_DETAIL, $viewImputation)
+            ->add(Crud::PAGE_DETAIL, $viewSummary)
+            ;
     }
 
 }

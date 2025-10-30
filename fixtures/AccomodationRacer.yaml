@@ -3,9 +3,14 @@ App\Entity\AccomodationRacer:
         accomodation: '@AcS1'
         racer: '@LOUANN'
         racerPlace: true
-        nonracerPlaceCount: 0
+        nonracerPlaceCount: 2
     ar2:
         accomodation: '@AcS2'
         racer: '@LOUANN'
         racerPlace: true
         nonracerPlaceCount: 1
+    ar3:
+        accomodation: '@AcS1'
+        racer: '@FREDERIC'
+        racerPlace: true
+        nonracerPlaceCount: 0

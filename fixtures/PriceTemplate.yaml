@@ -1,0 +1,55 @@
+App\Entity\Pricetemplate:
+    pt0:
+        name: 'P0'
+        price: 0
+        skiday: 0
+        accomodation: 0
+        skipass: 0
+    pt0H:
+        name: 'P0H'
+        price: 40
+        skiday: 0
+        accomodation: 1
+        skipass: 0
+    pt0HF:
+        name: 'P0HF'
+        price: 60
+        skiday: 0
+        accomodation: 1
+        skipass: 1
+    pt1:
+        name: 'P1'
+        price: 10
+        skiday: 1
+        accomodation: 0
+        skipass: 0
+    pt2:
+        name: 'P1F'
+        price: 10
+        skiday: 1
+        accomodation: 0
+        skipass: 1
+    pt3:
+        name: 'P2'
+        price: 30
+        skiday: 2
+        accomodation: 0
+        skipass: 0
+    pt4:
+        name: 'P2H'
+        price: 40
+        skiday: 2
+        accomodation: 1
+        skipass: 0
+    pt5:
+        name: 'P2F'
+        price: 50
+        skiday: 2
+        accomodation: 0
+        skipass: 1
+    pt6:
+        name: 'P2HF'
+        price: 100
+        skiday: 2
+        accomodation: 1
+        skipass: 1
