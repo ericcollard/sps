@@ -46,10 +46,22 @@ App\Entity\Pricetemplate:
         price: 50
         skiday: 2
         accomodation: 0
+        skipass: 2
+    pt5a:
+        name: 'P2F1'
+        price: 50
+        skiday: 2
+        accomodation: 0
         skipass: 1
     pt6:
         name: 'P2HF'
         price: 100
+        skiday: 2
+        accomodation: 1
+        skipass: 2
+    pt6a:
+        name: 'P2HF1'
+        price: 90
         skiday: 2
         accomodation: 1
         skipass: 1

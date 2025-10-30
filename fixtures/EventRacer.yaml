@@ -11,3 +11,11 @@ App\Entity\EventRacer:
         racer: '@LOUANN'
         event: '@S3'
         validated: false
+    er4:
+        racer: '@VANESSA'
+        event: '@S2'
+        validated: false
+    er5:
+        racer: '@FREDERIC'
+        event: '@S2'
+        validated: false

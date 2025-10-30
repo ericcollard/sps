@@ -17,6 +17,6 @@ App\Entity\SkidayRacer:
         racer: '@LOUANN'
         skiday: '@vsd3'
         trainingRacer: true
-        skipassRacer: false
+        skipassRacer: true
         lunchRacer: true
         skipassNonracerCount: 0
