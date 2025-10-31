@@ -48,21 +48,23 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToUrl('Homepage', 'fas fa-home', $this->generateUrl('homepage'));
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-dashboard');
-        yield MenuItem::linkToCrud('Familles', 'fa fa-list', Family::class);
-        yield MenuItem::linkToCrud('Contacts', 'fa fa-list', Contact::class);
-        yield MenuItem::linkToCrud('Coureurs', 'fa fa-list', Racer::class);
-        yield MenuItem::linkToCrud('Hébergements', 'fa fa-list', Accomodation::class);
-        yield MenuItem::linkToCrud('Hébergement coureur', 'fa fa-list', AccomodationRacer::class);
-        yield MenuItem::linkToCrud('Sortie', 'fa fa-list', Event::class);
-        yield MenuItem::linkToCrud('Sortie coureur', 'fa fa-list', EventRacer::class);
-        yield MenuItem::linkToCrud('Comptabilité', 'fa fa-list', Accounting::class);
-        yield MenuItem::linkToCrud('Grille de tarifs', 'fa fa-list', Pricetemplate::class);
-        yield MenuItem::linkToCrud('Journée ski', 'fa fa-list', Skiday::class);
-        yield MenuItem::linkToCrud('Journée ski coureur', 'fa fa-list', SkidayRacer::class);
-        yield MenuItem::linkToCrud('Transport', 'fa fa-list', Transport::class);
-        yield MenuItem::linkToCrud('Transport coureur', 'fa fa-list', TransportRacer::class);
-        yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-list', User::class);
-        yield MenuItem::linkToCrud('Paramètres', 'fa fa-list', Parameter::class);
+        yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-user', User::class);
+        yield MenuItem::linkToCrud('Familles', 'fa fa-users', Family::class);
+        yield MenuItem::linkToCrud('Contacts', 'fa fa-address-book', Contact::class);
+        yield MenuItem::linkToCrud('Coureurs', 'fa fa-person-skiing', Racer::class);
+        yield MenuItem::linkToCrud('Sortie', 'fa fa-calendar', Event::class);
+        yield MenuItem::linkToCrud('Comptabilité', 'fa fa-euro-sign', Accounting::class);
+        yield MenuItem::linkToCrud('Paramètres', 'fa fa-gears', Parameter::class);
+        yield MenuItem::linkToCrud('Grille de tarifs', 'fa fa-money-check-dollar', Pricetemplate::class);
+        yield MenuItem::linkToCrud('Hébergements', 'fa fa-bed', Accomodation::class);
+        yield MenuItem::linkToCrud('Transport', 'fa fa-van-shuttle', Transport::class);
+        yield MenuItem::linkToCrud('Journée ski', 'fa fa-person-skiing', Skiday::class);
+
+        yield MenuItem::linkToCrud('Hébergement coureur', 'fa fa-lock', AccomodationRacer::class);
+        yield MenuItem::linkToCrud('Sortie coureur', 'fa fa-lock', EventRacer::class);
+        yield MenuItem::linkToCrud('Journée ski coureur', 'fa fa-lock', SkidayRacer::class);
+        yield MenuItem::linkToCrud('Transport coureur', 'fa fa-lock', TransportRacer::class);
+
     }
 
     public function configureActions(): Actions

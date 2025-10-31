@@ -122,6 +122,7 @@ final class PlanningController extends AbstractController
                 if ($event->getType() == "Vacances scolaires")
                 {
                     $dayFlags['vacance'] = true;
+                    $dayFlags['eventId'] = $event->getId();
                 }
                 else
                 {
@@ -170,17 +171,16 @@ final class PlanningController extends AbstractController
                 }
 
                 # Nuitée
-                if ($racer)
+                $accomodation = $em->getRepository(Accomodation::class)->findOneByEventAndDate($event,$dayFlags['dateTimeDay']);
+                if ($accomodation)
                 {
-                    $accomodation = $em->getRepository(Accomodation::class)->findOneByEventAndDate($event,$dayFlags['dateTimeDay']);
-                    if ($accomodation)
-                    {
-                        $dayFlags['accomodationId'] = $accomodation->getId();
-                        $dayFlags['night'] = 0;
+                    $dayFlags['accomodationId'] = $accomodation->getId();
+                    $dayFlags['night'] = 0;
+                    $accomodationRacerRegistration = null;
+                    if ($racer)
                         $accomodationRacerRegistration = $em->getRepository(AccomodationRacer::class)->getRacerRegistration($racer,$accomodation);
-                        if ($accomodationRacerRegistration) $dayFlags['accomodationRacerId'] = $accomodationRacerRegistration->getId();
-                        if ($accomodationRacerRegistration and $accomodationRacerRegistration->isRacerPlace()) $dayFlags['night'] = 1;
-                    }
+                    if ($accomodationRacerRegistration) $dayFlags['accomodationRacerId'] = $accomodationRacerRegistration->getId();
+                    if ($accomodationRacerRegistration and $accomodationRacerRegistration->isRacerPlace()) $dayFlags['night'] = 1;
                 }
             }
 

@@ -35,6 +35,12 @@ class Event implements BlameableInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $memo = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $DefaultAccomodationLocation = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $DefaultSkidayLocation = null;
+
     /**
      * @var Collection<int, EventRacer>
      */
@@ -72,6 +78,8 @@ class Event implements BlameableInterface
      */
     #[ORM\OneToMany(targetEntity: Accounting::class, mappedBy: 'event')]
     private Collection $accountings;
+
+
 
 
     public function __construct()
@@ -323,6 +331,30 @@ class Event implements BlameableInterface
                 $accounting->setEvent(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDefaultAccomodationLocation(): ?string
+    {
+        return $this->DefaultAccomodationLocation;
+    }
+
+    public function setDefaultAccomodationLocation(?string $DefaultAccomodationLocation): static
+    {
+        $this->DefaultAccomodationLocation = $DefaultAccomodationLocation;
+
+        return $this;
+    }
+
+    public function getDefaultSkidayLocation(): ?string
+    {
+        return $this->DefaultSkidayLocation;
+    }
+
+    public function setDefaultSkidayLocation(?string $DefaultSkidayLocation): static
+    {
+        $this->DefaultSkidayLocation = $DefaultSkidayLocation;
 
         return $this;
     }

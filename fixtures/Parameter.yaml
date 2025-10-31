@@ -7,7 +7,17 @@ App\Entity\Parameter:
         NumericValue: 15.0
     p_3:
         name: 'DefaultLunchCost'
-        NumericValue: 22.0
+        NumericValue: 18.0
     p_4:
+        name: 'DefaultNonRacerAccomodationPrice'
+        NumericValue: 50.0
+    p_5:
+        name: 'DefaultNonRacerSkipassPrice'
+        NumericValue: 40.0
+    p_6:
+        name: 'DefaultSkipassYouthLimit'
+        NumericValue: 12
+    p_7:
         name: 'LockDelay'
-        NumericValue: 20.0
+        NumericValue: 8.0
+
