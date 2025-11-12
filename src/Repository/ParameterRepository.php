@@ -72,4 +72,8 @@ class ParameterRepository extends ServiceEntityRepository
         return $this->getNumericParameter('LockDelay');
     }
 
+    public function getHelpText(): float
+    {
+        return $this->getNumericParameter('Help');
+    }
 }

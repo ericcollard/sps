@@ -44,6 +44,6 @@ App\Entity\Contact:
         family: '@PY'
         value: 06 20 25 05 45
     c135:
-        type: login
+        type: Login
         family: '@PY'
         value: eric.collard@free.fr

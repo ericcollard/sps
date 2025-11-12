@@ -22,7 +22,7 @@
     <div class="container">
         <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">SCPA Panning System</a>
+                <a class="navbar-brand" href="{{ path('homepage') }}">SCPA Planning System</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -33,7 +33,7 @@
                         </li>
                         <li class="nav-item"><a class="nav-link" aria-current="page" href="{{ path('app_family') }}">Familles</a></li>
                         <li class="nav-item"><a class="nav-link" aria-current="page" href="{{ path('app_planning') }}">Planning</a></li>
-                        <li class="nav-item"><a class="nav-link" aria-current="page" href="#">Aide</a></li>
+                        <li class="nav-item"><a class="nav-link" aria-current="page" href="{{ path('help') }}">Aide</a></li>
                         <li class="nav-item"><a class="nav-link" aria-current="page" href="/admin">Admin</a></li>
                     </ul>
                     <ul class="navbar-nav mb-2 mb-lg-0 d-flex">
@@ -74,7 +74,7 @@
             {% endfor %}
         {% endfor %}
 
-        <main>
+        <main class="mb-4">
             {% block body %}{% endblock %}
         </main>
 

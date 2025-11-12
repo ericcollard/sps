@@ -1,67 +1,85 @@
 App\Entity\Pricetemplate:
-    pt0:
+    P0:
         name: 'P0'
         price: 0
         skiday: 0
         accomodation: 0
         skipass: 0
-    pt0H:
+    P0H:
         name: 'P0H'
         price: 40
         skiday: 0
         accomodation: 1
         skipass: 0
-    pt0HF:
+    P0HF:
         name: 'P0HF'
-        price: 60
+        price: 80
         skiday: 0
         accomodation: 1
         skipass: 1
-    pt1:
+    P0F:
+        name: 'P0F'
+        price: 40
+        skiday: 0
+        accomodation: 0
+        skipass: 1
+    P1:
         name: 'P1'
-        price: 10
+        price: 35
         skiday: 1
         accomodation: 0
         skipass: 0
-    pt2:
+    P1F:
         name: 'P1F'
-        price: 10
+        price: 85
         skiday: 1
         accomodation: 0
         skipass: 1
-    pt3:
-        name: 'P2'
-        price: 30
-        skiday: 2
-        accomodation: 0
-        skipass: 0
-    pt4:
-        name: 'P2H'
-        price: 40
-        skiday: 2
+    P1H:
+        name: 'P1H'
+        price: 75
+        skiday: 1
         accomodation: 1
         skipass: 0
-    pt5:
-        name: 'P2F'
-        price: 50
-        skiday: 2
-        accomodation: 0
-        skipass: 2
-    pt5a:
-        name: 'P2F1'
-        price: 50
-        skiday: 2
-        accomodation: 0
+    P1HF:
+        name: 'P1HF'
+        price: 90
+        skiday: 1
+        accomodation: 1
         skipass: 1
-    pt6:
-        name: 'P2HF'
+    P2:
+        name: 'P2'
+        price: 60
+        skiday: 2
+        accomodation: 0
+        skipass: 0
+    P2H:
+        name: 'P2H'
         price: 100
         skiday: 2
         accomodation: 1
+        skipass: 0
+    P2F1:
+        name: 'P2F1'
+        price: 105
+        skiday: 2
+        accomodation: 0
+        skipass: 1
+    P2F2:
+        name: 'P2F2'
+        price: 115
+        skiday: 2
+        accomodation: 0
         skipass: 2
-    pt6a:
-        name: 'P2HF1'
-        price: 90
+    P2F1H:
+        name: 'P2F1H'
+        price: 130
         skiday: 2
         accomodation: 1
         skipass: 1
+    P2F2H:
+        name: 'P2F2H'
+        price: 155
+        skiday: 2
+        accomodation: 1
+        skipass: 2

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ParameterRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Timestampable;
 use Knp\DoctrineBehaviors\Contract\Entity\BlameableInterface;
@@ -21,9 +22,6 @@ class Parameter implements BlameableInterface
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $StringValue = null;
-
     #[ORM\Column(nullable: true)]
     private ?float $NumericValue = null;
 
@@ -34,6 +32,9 @@ class Parameter implements BlameableInterface
     #[ORM\Column]
     #[Timestampable(on: 'update')]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $Textvalue = null;
 
     public function getId(): ?int
     {
@@ -48,18 +49,6 @@ class Parameter implements BlameableInterface
     public function setName(string $name): static
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getStringValue(): ?string
-    {
-        return $this->StringValue;
-    }
-
-    public function setStringValue(?string $StringValue): static
-    {
-        $this->StringValue = $StringValue;
 
         return $this;
     }
@@ -96,6 +85,18 @@ class Parameter implements BlameableInterface
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getTextvalue(): ?string
+    {
+        return $this->Textvalue;
+    }
+
+    public function setTextvalue(?string $Textvalue): static
+    {
+        $this->Textvalue = $Textvalue;
 
         return $this;
     }

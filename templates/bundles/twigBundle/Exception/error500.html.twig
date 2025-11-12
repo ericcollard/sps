@@ -1,16 +1,17 @@
-{# templates/bundles/TwigBundle/Exception/error.html.twig #}
+{# templates/bundles/TwigBundle/Exception/error500.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block body %}
 <div class="row mt-5 justify-content-center align-items-center">
     <div class="col-6 justify-content-center">
-        <h1>Page non trouvée</h1>
+        <h1>Erreur 500</h1>
 
+    <p>Une erreur est survenue et empêche le traitement normal de votre demande</p>
+    <p>Voici le détail de l'erreur :</p>
+    <em>{{ exception.message }}</em>
     <p>
-        La page demandée n'a pas été trouvée. Vérifiez votre URL ou
         <a href="{{ path('homepage') }}">Retournez à la page d'accueil</a>.
     </p>
-        <em>{{ exception.message }}</em>
     </div>
 </div>
 {% endblock %}

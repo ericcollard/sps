@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+{% block title %}Scpa planning system{% endblock %}
+{% block body %}
+    <div class="container py-4">
+        <h1>Aide à l'utilisation de SPS</h1>
+        {{ helpText |raw}}
+
+        <h2 class="mt-5">Ecran principal du planning</h2>
+        <img class="w-100" src="{{ asset('images/aide-planning.jpg') }}">
+
+        <h2 class="mt-5">Détail du planning pour une journée</h2>
+        <img class="w-100" src="{{ asset('images/aide-planning-date.jpg') }}">
+
+        <h2 class="mt-5">Visualisation des comptes famille</h2>
+        <img class="w-100" src="{{ asset('images/aide-compte-famille.jpg') }}">
+    </div>
+
+
+
+{% endblock %}

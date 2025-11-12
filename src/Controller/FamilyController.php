@@ -60,6 +60,8 @@ final class FamilyController extends AbstractController
         if ($family)
         {
             $authUserfamily = $em->getRepository(Family::class)->findOneByLogin($this->getUser()->getEmail());
+            if (!$authUserfamily)
+                throw new AccessDeniedException('Pas de famille associée au login courant !');
             if ($authUserfamily->getId() != $family->getId())
                 throw new AccessDeniedException('Opération interdite hors famille connectée !');
         }

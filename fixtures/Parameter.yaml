@@ -1,7 +1,7 @@
 App\Entity\Parameter:
     p_1:
         name: 'RegisterSecurityCode'
-        StringValue: 'Scpa2025'
+        Textvalue: 'Scpa2025'
     p_2:
         name: 'TransportCost'
         NumericValue: 15.0
@@ -20,4 +20,6 @@ App\Entity\Parameter:
     p_7:
         name: 'LockDelay'
         NumericValue: 8.0
-
+    p_8:
+        name: 'Help'
+        Textvalue: default

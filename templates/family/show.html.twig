@@ -45,7 +45,7 @@
                     <tbody>
                     {% for racer in racers %}
                     <tr>
-                        <td><a href="#">{{ racer.licenseNumber }}</a></td>
+                        <td>{{ racer.licenseNumber }}</td>
                         <td>{{ racer.name }}</td>
                         <td>{{ racer.birthDate |date('d/m/Y')}}</td>
                         <td>{{ racer.getFfsCategory() }}</td>
@@ -114,10 +114,10 @@
                         <td>{{ accounting.ImputationDate|format_datetime('full', 'short', locale='fr') }}</td>
 
                         <td>
-                            {% if accounting.family %}
-                                Mouvement famille
-                            {% else %}
+                            {% if accounting.racer %}
                                 Mouvement {{ accounting.racer.name }}
+                            {% else %}
+                                Mouvement famille
                             {% endif %}
                         </td>
                         <td>{{ accounting.value|number_format(2, '.') }}€</td>
@@ -129,16 +129,16 @@
             </div>
             <div class="tab-pane fade" id="emploi" role="tabpanel" aria-labelledby="emploi-tab">
                 <h3>Onglet LICENCIES</h3>
-                <p>Cet onglet présente la liste des licenciés enregistrés pour la famille courante. Vous pouvez cliquer sur le numéro de licence pour accéder à la fiche licencié.</p>
+                <p>Cet onglet présente la liste des licenciés enregistrés pour la famille courante.</p>
 
                 <h3>Onglet ADRESSE</h3>
-                <p>Cet onglet présente l'adresse enregistrée pour la famille. Si elle est inexacte, vous pouvez la modifier en cliquant sur le bouton "Modifier"</p>
+                <p>Cet onglet présente l'adresse enregistrée pour la famille. Si elle est inexacte, envoyez un email au club pour la faire modifier.</p>
                 <h3>Onglet CONTACT</h3>
-                <p>Cet onglet présente la liste des contacts. Vous pouvez en ajouter, en retirer et modifier les éléments existants.</p>
+                <p>Cet onglet présente la liste des contacts. Ne cas d'inexactidue, envoyez un email au club pour la faire modifier.</p>
                 <div class="bg-primary"><p>IMPORTANT : </p>
                     <ul>
                         <li>Toute la communication au sein du club s'appuiera sur ces éléments (emails, appels d'urgence etc.). Il vous appartient donc de maintenir ceci à jour en permanence.</li>
-                        <li>Ne pas modifier le contact nommé "Login" car il est nécessaire pour vous permettre d'accéder au site SPS.</li>
+                        <li>Le contact nommé "Login" est votre adresse de connexion au site SPS. Elle est unique par famille.</li>
                     </ul>
                 </div>
                 <h3>Onglet COMPTA</h3>

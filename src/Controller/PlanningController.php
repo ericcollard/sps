@@ -29,6 +29,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Config\TwigExtra\StringConfig;
 use function PHPUnit\Framework\isNull;
+use function PHPUnit\Framework\isNumeric;
 use function PHPUnit\Framework\throwException;
 
 final class PlanningController extends AbstractController
@@ -699,6 +700,9 @@ final class PlanningController extends AbstractController
                     $racerData['cntTransport'] += $transportRacer->getNonracerPlaceCount();
                 }
             }
+            // pour le transport, on compte par paire non divisible
+            $racerData['cntTransport'] = ceil($racerData['cntTransport']/2);
+
             foreach ($accomodations as $accomodation)
             {
                 $accomodationRacer = $em->getRepository(AccomodationRacer::class)->getRacerRegistration($racer,$accomodation);
@@ -767,12 +771,15 @@ final class PlanningController extends AbstractController
 
             // Prix total
             if ($priceTemplate)
+            {
                 $racerData['totalPrice'] = $racerData['lunchCost'] +
                     $transportCost * $racerData['cntTransport'] +
                     $priceTemplate->getPrice() +
                     $racerData['skipassNRCost'] +
                     $racerData['accomodationNRCost']
                 ;
+            }
+
             else
                 $racerData['totalPrice'] = 'na.';
 
@@ -824,14 +831,16 @@ final class PlanningController extends AbstractController
                 throw $this->createNotFoundException('Erreur sps : Coureur non trouvé avec le code '.$racerData['id']);
             $accountingItem = new Accounting();
             $accountingItem->setEvent($event);
+            $accountingItem->setEvent($event);
             $accountingItem->setImputationDate($event->getEnddate());
             $accountingItem->setRacer($racer);
             $accountingItem->setFamily($racer->getFamily());
             $accountingItem->setUsername($this->getUser()->getEmail());
             $accountingItem->setReason('Imputation sortie - '.$event->__toString().' - '.$racer->__toString());
+            if ($racerData['totalPrice'] == 'na.')
+                throw $this->createNotFoundException('Erreur : Imputation impossible car pas de formule trouvée pour '.$racer->__toString());
             $accountingItem->setValue(-$racerData['totalPrice']);
             $em->persist($accountingItem);
-
             $eventRacer = $em->getRepository(EventRacer::class)->findOneByEventAndRacer($event,$racer);
             if (!$eventRacer)
                 throw $this->createNotFoundException('Erreur sps : Sortie Courreur non trouvée pour le coureur '.$racerData['id'].' sortie '.$eventId);

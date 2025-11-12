@@ -28,7 +28,7 @@ class RegistrationController extends AbstractController
             $securityCode = $entityManager->getRepository(Parameter::class)->findOneBy(['name' => 'RegisterSecurityCode']);
             if ($securityCode)
             {
-                if ($securityCode->getStringValue() == $formClubCode)
+                if ($securityCode->getTextvalue() == $formClubCode)
                 {
                     /** @var string $plainPassword */
                     $plainPassword = $form->get('plainPassword')->getData();
