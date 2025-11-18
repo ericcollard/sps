@@ -360,11 +360,19 @@
                                         {% if racer and row[i]['ski'] > -1 %}
                                             <a href="{{ path('ToggleTraining', {racerId: racer.getId(), skidayRacerId: row[i]['skidayRacerId'], skidayId: row[i]['skidayId']}) }}">
                                                 <div class="{% if  row[i]['ski'] == 0 %}unregistred{% endif  %} {% if  row[i]['ski'] == 1 %}registred{% endif  %}">
-                                                    <i class="fa-solid fa-person-skiing" title="Entrainement"></i>
+                                                    {% if  row[i]['skidayType'] == "Course" %}
+                                                        <i class="fa-solid fa-trophy" title="Course"></i>
+                                                    {% else  %}
+                                                        <i class="fa-solid fa-person-skiing" title="Entrainement"></i>
+                                                    {% endif  %}
                                                 </div>
                                             </a>
                                         {% elseif row[i]['ski'] > -1 %}
-                                            <i class="fa-solid fa-person-skiing" title="Entrainement"></i>
+                                            {% if  row[i]['skidayType'] == "Course" %}
+                                                <i class="fa-solid fa-trophy" title="Course"></i>
+                                            {% else  %}
+                                                <i class="fa-solid fa-person-skiing" title="Entrainement"></i>
+                                            {% endif  %}
                                         {% endif  %}
 
                                         {% if racer and row[i]['dinner'] > -1 %}

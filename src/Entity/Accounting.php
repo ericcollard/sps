@@ -28,9 +28,6 @@ class Accounting implements BlameableInterface
     #[ORM\Column]
     private ?float $value = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $username = null;
-
     #[ORM\ManyToOne(inversedBy: 'accountings')]
     #[ORM\JoinColumn(nullable: true)]
     private ?Family $family = null;

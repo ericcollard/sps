@@ -251,4 +251,29 @@ class Family implements BlameableInterface
 
         return $this;
     }
+
+    public function getAccountingPosition()
+    {
+        $sum = 0;
+        $countedIds = [];
+        // lignes propres à la famille
+        foreach ($this->accountings as $accounting)
+        {
+            $countedIds[] = $accounting->getId();
+            $sum +=$accounting->getValue();
+        }
+        // lignes propres à un coureur
+        foreach ($this->racers as $racer)
+        {
+            foreach ($racer->getAccountings() as $accounting)
+            {
+                if (array_search($accounting->getId(),$countedIds) === false)
+                {
+                    $countedIds[] = $accounting->getId();
+                    $sum +=$accounting->getValue();
+                }
+            }
+        }
+        return $sum;
+    }
 }

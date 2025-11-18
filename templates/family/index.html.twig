@@ -14,7 +14,8 @@
         <thead>
         <tr>
             <th>Nom</th>
-            <th></th>
+            <th>Position comptable</th>
+            <th>Détail</th>
         </tr>
         </thead>
         <tbody>
@@ -22,10 +23,18 @@
             <tr>
                 <td>{{ family.name }}</td>
                 <td>
-                    <div class="row">
-                        <a href="{{ path('family', { id: family.id }) }}" class="btn btn-primary btn-sm" ><i class="fa-solid fa-magnifying-glass"></i> Afficher</a>
-                    </div>
+                    {% if family.getAccountingPosition() >= 0 %}
+                    <span class="text-success">{{ family.getAccountingPosition()|number_format(2) }} €</span>
+                    {% else %}
+                    <span class="text-danger">{{ family.getAccountingPosition()|number_format(2) }} €</span>
+                    {% endif %}
                 </td>
+                <td>
+                    <a href="{{ path('family', { id: family.id }) }}" class="btn btn-primary btn-sm" >
+                        <i class="fa-solid fa-magnifying-glass"></i> Afficher
+                    </a>
+                </td>
+
             </tr>
         {% endfor %}
         </tbody>
