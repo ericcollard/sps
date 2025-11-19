@@ -14,7 +14,7 @@
         <thead>
         <tr>
             <th>Nom</th>
-            <th>Position comptable</th>
+            {% if is_granted('ROLE_ADMIN') %}<th>Position comptable</th>{% endif %}
             <th>Détail</th>
         </tr>
         </thead>
@@ -22,6 +22,7 @@
         {% for family in families %}
             <tr>
                 <td>{{ family.name }}</td>
+                {% if is_granted('ROLE_ADMIN') %}
                 <td>
                     {% if family.getAccountingPosition() >= 0 %}
                     <span class="text-success">{{ family.getAccountingPosition()|number_format(2) }} €</span>
@@ -29,6 +30,7 @@
                     <span class="text-danger">{{ family.getAccountingPosition()|number_format(2) }} €</span>
                     {% endif %}
                 </td>
+                {% endif %}
                 <td>
                     <a href="{{ path('family', { id: family.id }) }}" class="btn btn-primary btn-sm" >
                         <i class="fa-solid fa-magnifying-glass"></i> Afficher
