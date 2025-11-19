@@ -51,6 +51,14 @@ class AccountingRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    public function getAccountingPosition()
+    {
+        return $this->createQueryBuilder('a')
+            ->select('SUM(a.value) as position')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     //    public function findOneBySomeField($value): ?Accounting
     //    {
     //        return $this->createQueryBuilder('a')

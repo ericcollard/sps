@@ -17,6 +17,7 @@ use App\Entity\SkidayRacer;
 use App\Entity\Transport;
 use App\Entity\TransportRacer;
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -32,10 +33,29 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
+    private ?EntityManagerInterface $em = null;
+
+    public function __construct(
+        EntityManagerInterface $em,
+    ) {
+        $this->em = $em;
+    }
+
     public function index(): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        return $this->render('admin/main.html.twig');
+
+        $users = $this->em->getRepository(User::class)->findBy([], ['email' => 'ASC']);
+        $accounting = $this->em->getRepository(Accounting::class)->getAccountingPosition();
+        if (!$accounting) $accounting = 0;
+        $cntRacers = $this->em->getRepository(Racer::class)->getActiveCnt();
+        if (!$cntRacers) $cntRacers = 0;
+
+        return $this->render('admin/main.html.twig',[
+            'users' => $users,
+            'accounting' => $accounting,
+            'cntRacers' => $cntRacers
+        ]);
     }
 
     public function configureDashboard(): Dashboard

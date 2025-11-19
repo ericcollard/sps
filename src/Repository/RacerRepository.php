@@ -18,6 +18,14 @@ class RacerRepository extends ServiceEntityRepository
         parent::__construct($registry, Racer::class);
     }
 
+    public function getActiveCnt()
+    {
+        return $this->createQueryBuilder('r')
+            ->select('COUNT(DISTINCT(r.id))')
+            ->andWhere('r.licenseActivated = true')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 
         /**
          * @return Racer[] Returns an array of Racer objects

@@ -1,2 +1,19 @@
 {# templates/admin/main.html.twig #}
-{% extends '@EasyAdmin/page/content.html.twig' %}
+{# extends '@EasyAdmin/page/content.html.twig' #}
+{% extends '@EasyAdmin/layout.html.twig' %}
+{% block main %}
+    <h5 class="mt-3">Liste des emails à jour</h5>
+    <p>
+        {% for user in users %}
+            {{ user.email }};
+        {% endfor %}
+    </p>
+    <h5 class="mt-3">Position comptable cumulée</h5>
+    {% if accounting >= 0 %}
+        <span class="text-success">{{ accounting|number_format(2) }} €</span>
+    {% else %}
+        <span class="text-danger">{{ accounting|number_format(2) }} €</span>
+    {% endif %}
+    <h5 class="mt-3">Licenses actives</h5>
+    <p>Le club déclare {{ cntRacers|number_format(0) }} licenses actives.</p>
+{% endblock main %}
