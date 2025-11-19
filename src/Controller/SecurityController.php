@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
-use App\Form\ResetPasswordFormType;
+use App\Entity\Family;
+use App\Entity\User;
+use App\Form\ChangePasswordFormType;
 use App\Form\ResetPasswordRequestFormType;
 use App\Repository\UserRepository;
 use App\Service\JWTService;
@@ -37,6 +39,45 @@ class SecurityController extends AbstractController
     public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+
+    #[Route('/change-password-form', name: 'change_password_form')]
+    public function changePassword(
+        Request $request,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $passwordHasher
+    ) : Response
+    {
+        $form = $this->createForm(ChangePasswordFormType::class);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            // Le formulaire est envoyé ET valide
+            // On va chercher l'utilisateur dans la base
+
+            if ($this->getUser())
+            {
+                $user = $this->getUser();
+                $user->setPassword(
+                    $passwordHasher->hashPassword($user, $form->get('password')->getData())
+                );
+
+                $em->flush();
+
+                $this->addFlash('success', 'Mot de passe changé avec succès');
+                return $this->redirectToRoute('app_login');
+            }
+
+
+            $this->addFlash('success', 'Lot de passe mis à jour');
+            return $this->redirectToRoute('homepage');
+        }
+
+
+
+        return $this->render('security/change_password_request.html.twig', [
+            'requestPassForm' => $form->createView()
+        ]);
     }
 
     #[Route('/mot-de-passe-oublie', name: 'forgotten_password')]
@@ -85,7 +126,7 @@ class SecurityController extends AbstractController
                 $mail->send(
                     'no-reply@sps.test',
                     $user->getEmail(),
-                    'Récupération de mot de passe sur le site OpenBlog',
+                    'Récupération de mot de passe sur le site Sps',
                     'password_reset',
                     compact('user', 'url') // ['user' => $user, 'url'=>$url]
                 );
@@ -127,7 +168,7 @@ class SecurityController extends AbstractController
             $user = $usersRepository->find($payload['user_id']);
 
             if($user){
-                $form = $this->createForm(ResetPasswordFormType::class);
+                $form = $this->createForm(ChangePasswordFormType::class);
 
                 $form->handleRequest($request);
 
