@@ -55,8 +55,10 @@ class RacerCrudController extends AbstractCrudController
             'Dirigeant optimum',
             'Carte neige Junior primo',
             'Carte neige Junior medium',
+            'Carte neige Junior optimum',
             'Carte neige Adulte primo',
             'Carte neige Adulte medium',
+            'Carte neige Adulte optimum',
             'Carte neige famille',
             'ESF' => 'ESF'];
         yield ChoiceField::new('licenseType','Type license')

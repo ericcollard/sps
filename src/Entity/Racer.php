@@ -29,7 +29,7 @@ class Racer implements BlameableInterface
     #[ORM\Column(length: 255)]
     private ?string $sex = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: false)]
     private ?\DateTime $birthDate = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -521,6 +521,7 @@ class Racer implements BlameableInterface
         else
             $season = $currentYear - 1;
 
+        if (!$this->getBirthDate()) return "na.";
         $birthYear = (int)$this->getBirthDate()->format("Y");
 
         $delta = $currentYear - $birthYear;
