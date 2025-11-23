@@ -45,13 +45,21 @@
                             <li>{{ skidayRacer.getRacer().__toString() }}
                                 {% if skiday.getSkipassYouthLimit() > 0 %}
                                     {% if skidayRacer.getRacer().getAgeAtDay(skiday.getDayDate()) > skiday.getSkipassYouthLimit() %}
-                                        Forfait adulte
+                                        {% if skidayRacer.getRacer().isRacer() %}
+                                            Forfait coureur adulte
+                                        {% else %}
+                                            Forfait non coureur adulte
+                                        {% endif %}
                                     {% else %}
-                                        Forfait junior
+                                        {% if skidayRacer.getRacer().isRacer() %}
+                                            Forfait coureur junior
+                                        {% else %}
+                                            Forfait non coureur junior
+                                        {% endif %}
                                     {% endif %}
                                 {% endif %}
 
-                                (+ {{ skidayRacer.getSkipassNonracerCount() }} non coureur)
+                                (+ {{ skidayRacer.getSkipassNonracerCount() }} accompagnateur)
                             </li>
                         {% endif %}
                     {% endfor %}
@@ -69,14 +77,19 @@
                 <p>Soit {{ skiday.getTrainingCount('Racer') }} coureur(s) , {{ skiday.getTrainingCount('Coach') }} coach(s), et {{ skiday.getTrainingCount('Instructor') }} moniteur(s)</p>
 
                 <h5>Repas du midi</h5>
-                <ul>
-                    {% for skidayRacer in skiday.getSkidayRacers() %}
-                        {% if skidayRacer.isLunchRacer() %}
-                            <li>{{ skidayRacer.getRacer().__toString() }}</li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-                <p>Soit {{ skiday.getDinnerCount('Racer') }} repas coureur, et {{ skiday.getDinnerCount('Coach') }} repas coach</p>
+                {% if skiday.isLunchActivated() %}
+                    <ul>
+                        {% for skidayRacer in skiday.getSkidayRacers() %}
+                            {% if skidayRacer.isLunchRacer() %}
+                                <li>{{ skidayRacer.getRacer().__toString() }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                    <p>Soit {{ skiday.getDinnerCount('Racer') }} repas coureur, {{ skiday.getDinnerCount('Coach') }} repas coach et {{ skiday.getDinnerCount('Accomp') }} repas accompagnateur</p>
+                {% else %}
+                    <p>Repas non organisé par le club</p>
+                {% endif %}
+
             {% else %}
                 <p><em>Pas de jour de ski défini pour cette période</em></p>
             {% endfor %}
@@ -103,7 +116,7 @@
                         <li>{{ accomodationRacer.getRacer().__toString() }} (+ {{ accomodationRacer.getNonracerPlaceCount() }} non coureur)</li>
                     {% endfor %}
                 </ul>
-                <p>Soit {{ accomodation.getCount('Girl') }} fille(s), {{ accomodation.getCount('Boy') }} garçon(s), {{ accomodation.getCount('Coach') }} Coach(s),  et {{ accomodation.getCount('Accompagnant') }} accompagnateur(s)</p>
+                <p>Soit {{ accomodation.getCount('Girl') }} coureur(s) fille, {{ accomodation.getCount('Boy') }} coureur(s) garçon, {{ accomodation.getCount('Coach') }} Coach(s),  et {{ accomodation.getCount('Accompagnant') }} accompagnateur(s)</p>
             {% else %}
                 <p><em>Pas d'hébergement défini pour cette période</em></p>
             {% endfor %}

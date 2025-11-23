@@ -158,13 +158,17 @@ class Accomodation implements BlameableInterface
                 {
                     $countCoach+=$NbCnt;
                 }
-                elseif ($racer->getSex() == "Fille")
+                elseif ($racer->getSex() == "Fille" and $racer->isRacer())
                 {
                     $countJuniorGirl+=$NbCnt;
                 }
-                else
+                elseif ($racer->getSex() == "Garçon" and $racer->isRacer())
                 {
                     $countJuniorBoy+=$NbCnt;
+                }
+                else
+                {
+                    $countAccompagnant +=$NbCnt;
                 }
             }
             if ($accomodationRacer->getNonracerPlaceCount() > 0) $countAccompagnant +=$accomodationRacer->getNonracerPlaceCount();

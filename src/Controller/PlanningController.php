@@ -64,6 +64,9 @@ final class PlanningController extends AbstractController
             $racer = $em->getRepository(Racer::class)->find(['id' => $racerId]);
         }
 
+        // Tous les coureurs (pour admin)
+        $racers = null;
+        $racers = $em->getRepository(Racer::class)->findAll();
 
         // Construction du calendrier
         $first = getdate(mktime(0, 0, 0, $month, 1, $year)) ;
@@ -188,7 +191,7 @@ final class PlanningController extends AbstractController
             $skiday = $em->getRepository(Skiday::class)->findOneByDate($dayFlags['dateTimeDay']);
             if ($skiday)
             {
-                $dayFlags['dinner'] = 0;
+                if ($skiday->isLunchActivated()) $dayFlags['dinner'] = 0;
                 $dayFlags['ski'] = 0;
                 $dayFlags['skipass'] = 0;
                 $dayFlags['skidayId'] = $skiday->getId();
@@ -244,14 +247,16 @@ final class PlanningController extends AbstractController
             'arrDayOfWeekName' => $arrDayOfWeekName,
             'racer' => $racer,
             'family' => $family,
-            'racerId' => $racerId
+            'racerId' => $racerId,
+            'racers' => $racers
         ]);
     }
 
-    public function checkEditCredentials($racer,EntityManagerInterface $em)
+    public function checkEditCredentials($racer,EntityManagerInterface $em, $adminFlag)
     {
         if ($racer)
         {
+            if ($adminFlag) return true;
             $authUserfamily = $em->getRepository(Family::class)->findOneByLogin($this->getUser()->getEmail());
             if ($authUserfamily->getId() != $racer->getFamily()->getId())
                 throw new AccessDeniedException('Opération interdite pour un coureur hors famille connectée !');
@@ -264,6 +269,9 @@ final class PlanningController extends AbstractController
 
     public function checkEditDelay(DateTime $eventDate,EntityManagerInterface $em)
     {
+        if ($this->isGranted('ROLE_ADMIN'))
+            return true;
+
         // ok si plus de délais entre $eventDate et la date courante que le nombre de jours défini dans le paramètre
         $lockDelay = $em->getRepository(Parameter::class)->getLockDelay();
         $currenTimestamp = time();
@@ -333,7 +341,7 @@ final class PlanningController extends AbstractController
         $infos = [];
 
         //check credential
-        $this->checkEditCredentials($racer,$em);
+        $this->checkEditCredentials($racer,$em,$this->isGranted('ROLE_ADMIN'));
 
         if ($skidayRacer)
         {
@@ -431,7 +439,7 @@ final class PlanningController extends AbstractController
         }
 
         //A t on le droit de modifier ?
-        $this->checkEditCredentials($transportRacer->getRacer(),$em);
+        $this->checkEditCredentials($transportRacer->getRacer(),$em,$this->isGranted('ROLE_ADMIN'));
         if (!$this->checkEditDelay($transportRacer->getTransport()->getEvent()->getStartdate(), $em))
             throw new AccessDeniedException("Hors délais : il n'est plus possible de modifier cette sortie");
 
@@ -459,8 +467,6 @@ final class PlanningController extends AbstractController
         ]);
 
     }
-
-
 
     #[Route('/planning/ToggleAccomodation/{accomodationRacerId}', name: 'ToggleAccomodation')]
     public function ToggleAccomodation(int $accomodationRacerId, Request $request,EntityManagerInterface $em): Response
@@ -490,7 +496,7 @@ final class PlanningController extends AbstractController
         }
 
         //A t on le droit de modifier ?
-        $this->checkEditCredentials($accomodationRacer->getRacer(),$em);
+        $this->checkEditCredentials($accomodationRacer->getRacer(),$em,$this->isGranted('ROLE_ADMIN'));
         if (!$this->checkEditDelay($accomodationRacer->getAccomodation()->getDayDate(), $em))
             throw new AccessDeniedException("Hors délais : il n'est plus possible de modifier cette sortie");
 
@@ -547,7 +553,7 @@ final class PlanningController extends AbstractController
         }
 
         //A t on le droit de modifier ?
-        $this->checkEditCredentials($skidayRacer->getRacer(),$em);
+        $this->checkEditCredentials($skidayRacer->getRacer(),$em,$this->isGranted('ROLE_ADMIN'));
         if (!$this->checkEditDelay($skidayRacer->getSkiday()->getDayDate(), $em))
             throw new AccessDeniedException("Hors délais : il n'est plus possible de modifier cette sortie");
 

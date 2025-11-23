@@ -33,6 +33,7 @@ class SkidayCrudController extends AbstractCrudController
         yield Field::new('skipassYouthLimit','Age max forfait jeune (compris)')->setColumns(6)->hideOnIndex();
         yield Field::new('skipassPrice','Tarif forfait journée (hors coureur)')->setColumns(6);
         yield Field::new('lunchPrice','Tarif repas')->setColumns(6);
+        yield Field::new('lunchActivated','Repas organisé par le club ? ')->setColumns(6);
     }
 
 }

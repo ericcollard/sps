@@ -60,9 +60,13 @@ class Skiday implements BlameableInterface
     #[Timestampable(on: 'update')]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\Column]
+    private ?bool $lunchActivated = null;
+
     public function __construct()
     {
         $this->SkidayRacers = new ArrayCollection();
+        $this->lunchActivated = true;
     }
 
     public function __toString(): string
@@ -217,12 +221,18 @@ class Skiday implements BlameableInterface
                 if ($this->getSkipassYouthLimit() > 0 and $racer->getAgeAtDay($skydayDate) <= $this->getSkipassYouthLimit())
                 {
                     // Junior
-                    $countJunior+=$NbPass;
+                    if ($racer->isRacer())
+                        $countJunior+=$NbPass;
+                    else
+                        $countAccompagnant+=$NbPass;
                 }
                 else
                 {
                     // adulte
-                    $countAdulte+=$NbPass;
+                    if ($racer->isRacer())
+                        $countAdulte+=$NbPass;
+                    else
+                        $countAccompagnant+=$NbPass;
                 }
             }
             if ($skidayRacer->getSkipassNonracerCount() > 0) $countAccompagnant +=$skidayRacer->getSkipassNonracerCount();
@@ -261,7 +271,7 @@ class Skiday implements BlameableInterface
                     // adulte
                     $countMoniteur+=$NbCnt;
                 }
-                else
+                elseif ($racer->isRacer())
                 {
                     $countRacer+=$NbCnt;
                 }
@@ -283,6 +293,7 @@ class Skiday implements BlameableInterface
     {
         $countRacer = 0;
         $countCoach = 0;
+        $countAccomp = 0;
         foreach ($this->getSkidayRacers() as $skidayRacer)
         {
             $NbCnt = 0;
@@ -294,9 +305,13 @@ class Skiday implements BlameableInterface
                 {
                     $countCoach+=$NbCnt;
                 }
-                else
+                elseif ($racer->isRacer())
                 {
                     $countRacer+=$NbCnt;
+                }
+                else
+                {
+                    $countAccomp+=$NbCnt;
                 }
             }
         }
@@ -305,8 +320,10 @@ class Skiday implements BlameableInterface
         {
             case 'Racer':
                 return $countRacer;
-            default:
+            case 'Coach':
                 return $countCoach;
+            default:
+                return $countAccomp;
         }
     }
 
@@ -330,6 +347,18 @@ class Skiday implements BlameableInterface
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function isLunchActivated(): ?bool
+    {
+        return $this->lunchActivated;
+    }
+
+    public function setLunchActivated(bool $lunchActivated): static
+    {
+        $this->lunchActivated = $lunchActivated;
 
         return $this;
     }

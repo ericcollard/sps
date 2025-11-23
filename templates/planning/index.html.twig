@@ -263,6 +263,24 @@
         {% endif %}
     </ul>
 
+    {% if is_granted('ROLE_ADMIN') %}
+    <div class="mt-3" style="width: 60%; margin: auto; font-size: 0.8em; color: dimgrey ">Tous les coureurs :</div>
+    <ul class="nav nav-pills nav-fill" style="width: 100%; margin: auto">
+        {% for racer in racers %}
+        <li  class="nav-item  small">
+            <a class="nav-link py-0" style="padding-right: 0.1rem; padding-left: 0.1rem" href="{{ path('app_planning', {month: monthNum, year: year, racerId: racer.id}) }}">
+                {%  if racer.getSex() == 'Fille' %}
+                    <i class="fa-solid fa-person-dress"></i>
+                {% else %}
+                    <i class="fa-solid fa-person"></i>
+                {% endif %}
+                {{ racer.__toString() }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
     <div class="global-wrapper d-lg-flex  mt-4">
         <div class="header-wrapper d-flex align-items-center">
             <p id="reset">

@@ -77,20 +77,17 @@ class RacerRepository extends ServiceEntityRepository
             return $racers;
         }
 
-    //    /**
-    //     * @return Racer[] Returns an array of Racer objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('r.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+
+        public function findAll(): array
+        {
+            return $this->createQueryBuilder('r')
+                ->andWhere('r.licenseActivated = :val')
+                ->setParameter('val', 1)
+                ->orderBy('r.id', 'ASC')
+                ->getQuery()
+                ->getResult()
+            ;
+        }
 
     //    public function findOneBySomeField($value): ?Racer
     //    {

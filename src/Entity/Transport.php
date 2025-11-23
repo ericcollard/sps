@@ -128,9 +128,13 @@ class Transport implements BlameableInterface
                 {
                     $countCoach+=$NbCnt;
                 }
-                else
+                elseif ($racer->isRacer())
                 {
                     $countRacer+=$NbCnt;
+                }
+                else
+                {
+                    $countAccompagnant +=$NbCnt;
                 }
             }
             if ($transportRacer->getNonracerPlaceCount() > 0) $countAccompagnant +=$transportRacer->getNonracerPlaceCount();
