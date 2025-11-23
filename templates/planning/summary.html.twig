@@ -72,11 +72,13 @@
                         {% if skidayRacer.isTrainingRacer() and skidayRacer.getRacer().isRacer() %}
                             <li>{{ skidayRacer.getRacer().__toString() }}</li>
                         {% elseif skidayRacer.isTrainingRacer() and skidayRacer.getRacer().isSkiCoach() %}
-                            <li>{{ skidayRacer.getRacer().__toString() }} (coach)</li>
+                            <li>{{ skidayRacer.getRacer().__toString() }} *</li>
+                        {% elseif skidayRacer.isTrainingRacer() and skidayRacer.getRacer().isSkiInstructor() %}
+                            <li>{{ skidayRacer.getRacer().__toString() }} **</li>
                         {% endif %}
                     {% endfor %}
                 </ul>
-                <p>Soit {{ skiday.getTrainingCount('Racer') }} coureur(s) , {{ skiday.getTrainingCount('Coach') }} coach(s), et {{ skiday.getTrainingCount('Instructor') }} moniteur(s)</p>
+                <p>Soit {{ skiday.getTrainingCount('Racer') }} coureur(s) , {{ skiday.getTrainingCount('Coach') }} coach(s) *, et {{ skiday.getTrainingCount('Instructor') }} moniteur(s) **</p>
 
                 <h5>Repas du midi</h5>
                 {% if skiday.isLunchActivated() %}
@@ -90,7 +92,7 @@
                             {% endif %}
                         {% endfor %}
                     </ul>
-                    <p>Soit {{ skiday.getDinnerCount('Racer') }} repas coureur, {{ skiday.getDinnerCount('Coach') }} repas coach ** et {{ skiday.getDinnerCount('Accomp') }} repas accompagnateur *</p>
+                    <p>Soit {{ skiday.getDinnerCount('Racer') }} repas coureur, {{ skiday.getDinnerCount('Coach') }} repas coach * et {{ skiday.getDinnerCount('Accomp') }} repas accompagnateur **</p>
                 {% else %}
                     <p>Repas non organisé par le club</p>
                 {% endif %}
@@ -106,8 +108,8 @@
                 <ul>
                     {% for transportRacer in transport.getTransportRacers() %}
                         <li>{{ transportRacer.getRacer().getName() }} {{ transportRacer.getRacer().getFamily().getName() }} (+ {{ transportRacer.getNonracerPlaceCount() }} non coureur)
-                            {% if skidayRacer.getRacer().isSkiCoach() %} *{% endif %}
-                            {% if not skidayRacer.getRacer().isSkiCoach() and not skidayRacer.getRacer().isRacer() %} **{% endif %}
+                            {% if transportRacer.getRacer().isSkiCoach() %} *{% endif %}
+                            {% if not transportRacer.getRacer().isSkiCoach() and not transportRacer.getRacer().isRacer() %} **{% endif %}
                         </li>
                     {% endfor %}
                 </ul>
@@ -122,8 +124,8 @@
                 <ul>
                     {% for accomodationRacer in accomodation.getAccomodationRacers() %}
                         <li>{{ accomodationRacer.getRacer().__toString() }} (+ {{ accomodationRacer.getNonracerPlaceCount() }} non coureur)
-                            {% if skidayRacer.getRacer().isSkiCoach() %} *{% endif %}
-                            {% if not skidayRacer.getRacer().isSkiCoach() and not skidayRacer.getRacer().isRacer() %} **{% endif %}
+                            {% if accomodationRacer.getRacer().isSkiCoach() %} *{% endif %}
+                            {% if not accomodationRacer.getRacer().isSkiCoach() and not accomodationRacer.getRacer().isRacer() %} **{% endif %}
                         </li>
                     {% endfor %}
                 </ul>
