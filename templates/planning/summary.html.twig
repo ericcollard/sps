@@ -69,7 +69,7 @@
                 <h5>Entrainement</h5>
                 <ul>
                     {% for skidayRacer in skiday.getSkidayRacers() %}
-                        {% if skidayRacer.isTrainingRacer() %}
+                        {% if skidayRacer.isTrainingRacer() and skidayRacer.getRacer().isRacer() %}
                             <li>{{ skidayRacer.getRacer().__toString() }}</li>
                         {% endif %}
                     {% endfor %}
