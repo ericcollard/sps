@@ -71,6 +71,8 @@
                     {% for skidayRacer in skiday.getSkidayRacers() %}
                         {% if skidayRacer.isTrainingRacer() and skidayRacer.getRacer().isRacer() %}
                             <li>{{ skidayRacer.getRacer().__toString() }}</li>
+                        {% elseif skidayRacer.isTrainingRacer() and skidayRacer.getRacer().isSkiCoach() %}
+                            <li>{{ skidayRacer.getRacer().__toString() }} (coach)</li>
                         {% endif %}
                     {% endfor %}
                 </ul>
