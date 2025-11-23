@@ -607,31 +607,17 @@ final class PlanningController extends AbstractController
     public function ShowSummary(Request $request,EntityManagerInterface $em): Response
     {
         $routeName = $request->attributes->get('_route');
-        $skidayId = -1;
         $eventId = -1;
         $eventId = $request->query->get('eventId');
-        $skidayId = (int)$request->query->get('skidayId');
         $title = "";
-        $dayStart = new datetime();
-        $dayEnd = new datetime();
+
         $event = null;
+        //dd($eventId);
+        $title = "période";
+        $event = $em->getRepository(Event::class)->find($eventId);
+        if (! $event)
+            throw $this->createNotFoundException('Sortie non trouvée');
 
-        if ($skidayId > 0)
-        {
-            //dd($skidayId);
-            $title = "Jour de ski";
-        }
-        else
-        {
-            //dd($eventId);
-            $title = "période";
-            $event = $em->getRepository(Event::class)->find($eventId);
-            if (! $event)
-                throw $this->createNotFoundException('Sortie non trouvée');
-            $dayStart = $event->getStartdate();
-            $dayEnd = $event->getEnddate();
-
-        }
 
         return $this->render('planning/summary.html.twig', [
             'title' => $title,

@@ -39,7 +39,6 @@
                 <h4>Journée du {{ skiday.getDayDate().format("d/m/Y")}} : {{ skiday.getDayType() }} ({{ skiday.getLocation() }})</h4>
                 <h5>Demandes de forfait</h5>
                 <ul>
-
                     {% for skidayRacer in skiday.getSkidayRacers() %}
                         {% if skidayRacer.isSkipassRacer() %}
                             <li>{{ skidayRacer.getRacer().__toString() }}
@@ -107,10 +106,17 @@
                 <h4>Direction : {{ transport.getDirection() }}</h4>
                 <ul>
                     {% for transportRacer in transport.getTransportRacers() %}
-                        <li>{{ transportRacer.getRacer().getName() }} {{ transportRacer.getRacer().getFamily().getName() }} (+ {{ transportRacer.getNonracerPlaceCount() }} non coureur)
-                            {% if transportRacer.getRacer().isSkiCoach() %} *{% endif %}
-                            {% if not transportRacer.getRacer().isSkiCoach() and not transportRacer.getRacer().isRacer() %} **{% endif %}
-                        </li>
+                        {% if transportRacer.isRacerPlace() or transportRacer.getNonracerPlaceCount() > 0 %}
+                            <li>
+                                {% if transportRacer.isRacerPlace() %}
+                                    {{ transportRacer.getRacer().__toString() }} (+ {{ transportRacer.getNonracerPlaceCount() }} non coureur)
+                                {% else %}
+                                    {{ transportRacer.getNonracerPlaceCount() }} non coureur (compte {{ transportRacer.getRacer().__toString() }})
+                                {% endif %}
+                                {% if transportRacer.getRacer().isSkiCoach() %} *{% endif %}
+                                {% if not transportRacer.getRacer().isSkiCoach() and not transportRacer.getRacer().isRacer() %} **{% endif %}
+                            </li>
+                        {% endif %}
                     {% endfor %}
                 </ul>
                 <p>Soit {{ transport.getCount('Racer') }} coureur(s), {{ transport.getCount('Coach') }} coach(s) *, et {{ transport.getCount('Accompagnant') }} accompagnateur(s) **</p>
@@ -123,10 +129,17 @@
                 <h4>Nuité du : {{ accomodation.getDayDate().format('d/m/Y') }} ({{ accomodation.getLocation() }})</h4>
                 <ul>
                     {% for accomodationRacer in accomodation.getAccomodationRacers() %}
-                        <li>{{ accomodationRacer.getRacer().__toString() }} (+ {{ accomodationRacer.getNonracerPlaceCount() }} non coureur)
-                            {% if accomodationRacer.getRacer().isSkiCoach() %} *{% endif %}
-                            {% if not accomodationRacer.getRacer().isSkiCoach() and not accomodationRacer.getRacer().isRacer() %} **{% endif %}
-                        </li>
+                        {% if accomodationRacer.isRacerPlace() or accomodationRacer.getNonracerPlaceCount() > 0 %}
+                            <li>
+                                {% if accomodationRacer.isRacerPlace() %}
+                                    {{ accomodationRacer.getRacer().__toString() }} (+ {{ accomodationRacer.getNonracerPlaceCount() }} non coureur)
+                                {% else %}
+                                    {{ accomodationRacer.getNonracerPlaceCount() }} non coureur (compte {{ accomodationRacer.getRacer().__toString() }})
+                                {% endif %}
+                                {% if accomodationRacer.getRacer().isSkiCoach() %} *{% endif %}
+                                {% if not accomodationRacer.getRacer().isSkiCoach() and not accomodationRacer.getRacer().isRacer() %} **{% endif %}
+                            </li>
+                        {% endif %}
                     {% endfor %}
                 </ul>
                 <p>Soit {{ accomodation.getCount('Girl') }} coureur(s) fille, {{ accomodation.getCount('Boy') }} coureur(s) garçon, {{ accomodation.getCount('Coach') }} Coach(s) *,  et {{ accomodation.getCount('Accompagnant') }} accompagnateur(s) **</p>
