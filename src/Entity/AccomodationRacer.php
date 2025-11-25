@@ -7,8 +7,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Timestampable;
 use Knp\DoctrineBehaviors\Contract\Entity\BlameableInterface;
 use Knp\DoctrineBehaviors\Model\Blameable\BlameableTrait;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: AccomodationRacerRepository::class)]
+#[UniqueEntity(
+    fields: ['racer', 'accomodation'],
+    message: 'La combinaison coureur / hébergement existe déjà.',
+    errorPath: 'accomodation',
+)]
 class AccomodationRacer implements BlameableInterface
 {
     use BlameableTrait;

@@ -7,6 +7,7 @@ use App\Entity\Skiday;
 use App\Entity\SkidayRacer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use function PHPUnit\Framework\throwException;
 
 /**
  * @extends ServiceEntityRepository<SkidayRacer>
@@ -45,6 +46,18 @@ class SkidayRacerRepository extends ServiceEntityRepository
 
     public function getRacerRegistration(Racer $racer,Skiday $skiday): ?SkidayRacer
     {
+        $mainQuery =  $this->createQueryBuilder('sr')
+            ->andWhere('sr.skiday = :skiday')
+            ->andWhere('sr.racer = :racer')
+            ->setParameter('skiday', $skiday)
+            ->setParameter('racer', $racer);
+
+        $cnt = $mainQuery->select('count(sr.id)')
+            ->getQuery()->getSingleScalarResult();
+
+        if ($cnt > 1)
+            throw new \Exception('Plusieurs enregistrements pour le coureur '.$racer->getId().' , skiday '.$skiday->getId().' : nombre = '.$cnt );
+
         return $this->createQueryBuilder('sr')
             ->andWhere('sr.skiday = :skiday')
             ->andWhere('sr.racer = :racer')

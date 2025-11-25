@@ -284,7 +284,7 @@ final class PlanningController extends AbstractController
             return false;
     }
 
-    public function verifyEventRacerOrCreate(Event $event, Racer $racer, EntityManagerInterface $em)
+    public function getEventRacerOrCreate(Event $event, Racer $racer, EntityManagerInterface $em)
     {
         $eventRacer = $em->getRepository(EventRacer::class)->findOneByEventAndRacer($event,$racer);
         if (!$eventRacer)
@@ -297,7 +297,60 @@ final class PlanningController extends AbstractController
             $em->persist($eventRacer);
             $em->flush();
         }
+        return $eventRacer;
     }
+
+    public function getTransportRacerOrCreate(Transport $transport, Racer $racer, EntityManagerInterface $em)
+    {
+        $transportRacer = $em->getRepository(TransportRacer::class)->getRacerRegistration($racer,$transport);
+        if (!$transportRacer)
+        {
+            $transportRacer = (new TransportRacer())
+                ->setTransport($transport)
+                ->setRacer($racer)
+                ->setRacerPlace(false)
+                ->setNonracerPlaceCount(0)
+                ->setAvailablePlaceCount(0);
+            $em->persist($transportRacer);
+            $em->flush();
+        }
+        return $transportRacer;
+    }
+
+    public function getAccomodationRacerOrCreate(Accomodation $accomodation, Racer $racer, EntityManagerInterface $em)
+    {
+        $accomodationRacer = $em->getRepository(AccomodationRacer::class)->getRacerRegistration($racer,$accomodation);
+        if (!$accomodationRacer)
+        {
+            $accomodationRacer = (new AccomodationRacer())
+                ->setAccomodation($accomodation)
+                ->setRacer($racer)
+                ->setRacerPlace(false)
+                ->setNonracerPlaceCount(0);
+            $em->persist($accomodationRacer);
+            $em->flush();
+        }
+        return $accomodationRacer;
+    }
+
+    public function getSkidayRacerOrCreate(Skiday $skiday, Racer $racer, EntityManagerInterface $em)
+    {
+        $skidayRacer = $em->getRepository(SkidayRacer::class)->getRacerRegistration($racer,$skiday);
+        if (!$skidayRacer)
+        {
+            $skidayRacer = (new SkidayRacer())
+                ->setSkiday($skiday)
+                ->setRacer($racer)
+                ->setSkipassRacer(false)
+                ->setLunchRacer(false)
+                ->setTrainingRacer(false)
+                ->setSkipassNonracerCount(0);
+            $em->persist($skidayRacer);
+            $em->flush();
+        }
+        return $skidayRacer;
+    }
+
 
     #[Route('/planning/SkidayOptions', name: 'SkidayOptions')]
     public function SkidayOptions(Request $request,EntityManagerInterface $em): Response
@@ -353,16 +406,19 @@ final class PlanningController extends AbstractController
         }
         if ($accomodationRacer)
         {
+            $infos['dayDate']= $accomodationRacer->getAccomodation()->getDayDate();
             $infos['accomodation']= $accomodationRacer->getAccomodation()->getLocation();
             $skidayOptions->accomodationNonracerPlaceCount = $accomodationRacer->getNonracerPlaceCount();
         }
         if ($transportAllerRacer)
         {
+            $infos['dayDate']= $transportAllerRacer->getTransport()->getEvent()->getStartdate();
             $skidayOptions->transportAllerNonracerPlaceCount = $transportAllerRacer->getNonracerPlaceCount();
             $skidayOptions->transportAllerAvailablePlaceCount = $transportAllerRacer->getAvailablePlaceCount();
         }
         if ($transportRetourRacer)
         {
+            $infos['dayDate']= $transportAllerRacer->getTransport()->getEvent()->getEnddate();
             $skidayOptions->transportRetourNonracerPlaceCount = $transportRetourRacer->getNonracerPlaceCount();
             $skidayOptions->transportRetourAvailablePlaceCount = $transportRetourRacer->getAvailablePlaceCount();
         }
@@ -428,14 +484,7 @@ final class PlanningController extends AbstractController
             $racerId = (int)$request->query->get('racerId');
             $transport = $em->getRepository(Transport::class)->find($transportId);
             $racer = $em->getRepository(Racer::class)->find($racerId);
-            $transportRacer = (new TransportRacer())
-                ->setTransport($transport)
-                ->setRacer($racer)
-                ->setRacerPlace(false)
-                ->setNonracerPlaceCount(0)
-                ->setAvailablePlaceCount(0);
-            $em->persist($transportRacer);
-            $em->flush();
+            $transportRacer = $this->getTransportRacerOrCreate($transport,$racer,$em);
         }
 
         //A t on le droit de modifier ?
@@ -444,7 +493,7 @@ final class PlanningController extends AbstractController
             throw new AccessDeniedException("Hors délais : il n'est plus possible de modifier cette sortie");
 
         // créer le eventRacer si il n'existe pas
-        $this->verifyEventRacerOrCreate($transportRacer->getTransport()->getEvent(),$transportRacer->getRacer(),$em);
+        $this->getEventRacerOrCreate($transportRacer->getTransport()->getEvent(),$transportRacer->getRacer(),$em);
 
         // Modification
         if ($transportRacer->isRacerPlace())
@@ -484,15 +533,7 @@ final class PlanningController extends AbstractController
             $accomodation = $em->getRepository(Accomodation::class)->find($accomodationId);
             $racerId = (int)$request->query->get('racerId');
             $racer = $em->getRepository(Racer::class)->find($racerId);
-
-            $accomodationRacer = (new AccomodationRacer())
-                ->setAccomodation($accomodation)
-                ->setRacer($racer)
-                ->setRacerPlace(false)
-                ->setNonracerPlaceCount(0);
-
-            $em->persist($accomodationRacer);
-            $em->flush();
+            $accomodationRacer = $this->getAccomodationRacerOrCreate($accomodation,$racer,$em);
         }
 
         //A t on le droit de modifier ?
@@ -501,7 +542,7 @@ final class PlanningController extends AbstractController
             throw new AccessDeniedException("Hors délais : il n'est plus possible de modifier cette sortie");
 
         // créer le eventRacer si il n'existe pas
-        $this->verifyEventRacerOrCreate($accomodationRacer->getAccomodation()->getEvent(),$accomodationRacer->getRacer(),$em);
+        $this->getEventRacerOrCreate($accomodationRacer->getAccomodation()->getEvent(),$accomodationRacer->getRacer(),$em);
 
         // Modification
         if ($accomodationRacer->isRacerPlace())
@@ -540,16 +581,7 @@ final class PlanningController extends AbstractController
             $skiday = $em->getRepository(Skiday::class)->find($skidayId);
             $racerId = (int)$request->query->get('racerId');
             $racer = $em->getRepository(Racer::class)->find($racerId);
-            $skidayRacer = (new SkidayRacer())
-                ->setSkiday($skiday)
-                ->setRacer($racer)
-                ->setSkipassRacer(false)
-                ->setLunchRacer(false)
-                ->setTrainingRacer(false)
-                ->setSkipassNonracerCount(0);
-
-            $em->persist($skidayRacer);
-            $em->flush();
+            $skidayRacer = $this->getSkidayRacerOrCreate($skiday,$racer,$em);
         }
 
         //A t on le droit de modifier ?
@@ -558,7 +590,7 @@ final class PlanningController extends AbstractController
             throw new AccessDeniedException("Hors délais : il n'est plus possible de modifier cette sortie");
 
         // créer le eventRacer si il n'existe pas
-        $this->verifyEventRacerOrCreate($skidayRacer->getSkiday()->getEvent(),$skidayRacer->getRacer(),$em);
+        $this->getEventRacerOrCreate($skidayRacer->getSkiday()->getEvent(),$skidayRacer->getRacer(),$em);
 
 
         $routeName = $request->attributes->get('_route');
